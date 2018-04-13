@@ -7,18 +7,20 @@
 //
 
 import UIKit
+import Kitsunebi
 
-class ViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
+final class ViewController: UIViewController {
+  private lazy var playerView: KBAnimationView = KBAnimationView(frame: view.bounds)!
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.addSubview(playerView)
+  }
+  
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    playerView.play(mainVideoURL: Bundle.main.url(forResource: "gift", withExtension: "mp4")!,
+                    alphaVideoURL: Bundle.main.url(forResource: "alpha", withExtension: "mp4")!,
+                    fps: 30)
+  }
 }
 

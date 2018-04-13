@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37538BE82080497D00DBB4EB /* gift.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 37538BE62080497D00DBB4EB /* gift.mp4 */; };
+		37538BE92080497D00DBB4EB /* alpha.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 37538BE72080497D00DBB4EB /* alpha.mp4 */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -28,7 +30,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		189F5007590E4ACCF8A3024B /* Kitsunebi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = Kitsunebi.podspec; path = ../Kitsunebi.podspec; sourceTree = "<group>"; };
+		189F5007590E4ACCF8A3024B /* Kitsunebi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Kitsunebi.podspec; path = ../Kitsunebi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		37538BE62080497D00DBB4EB /* gift.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = gift.mp4; sourceTree = "<group>"; };
+		37538BE72080497D00DBB4EB /* alpha.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = alpha.mp4; sourceTree = "<group>"; };
 		52B48990017D52AA5985AE83 /* Pods_Kitsunebi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Kitsunebi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Kitsunebi_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kitsunebi_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -41,12 +45,12 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		80E0FF848D4AAC1267BDE663 /* Pods-Kitsunebi_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Tests/Pods-Kitsunebi_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		89B2F51FB230E86F098D8D07 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		89B2F51FB230E86F098D8D07 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		A5132DBA2BB7A65D07CBA851 /* Pods_Kitsunebi_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Kitsunebi_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6601D19AF70E61C6D38E91E /* Pods-Kitsunebi_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Example/Pods-Kitsunebi_Example.release.xcconfig"; sourceTree = "<group>"; };
 		C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Example/Pods-Kitsunebi_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C76B8A08CF3BA0FC8B959D07 /* Pods-Kitsunebi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Tests/Pods-Kitsunebi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		CA14B7D7D40EAAE3D380AD89 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		CA14B7D7D40EAAE3D380AD89 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +97,8 @@
 		607FACD21AFB9204008FA782 /* Example for Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
+				37538BE72080497D00DBB4EB /* alpha.mp4 */,
+				37538BE62080497D00DBB4EB /* gift.mp4 */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -246,6 +252,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				37538BE92080497D00DBB4EB /* alpha.mp4 in Resources */,
+				37538BE82080497D00DBB4EB /* gift.mp4 in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);

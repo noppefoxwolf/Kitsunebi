@@ -1,0 +1,16 @@
+PODS:
+  - Kitsunebi (0.1.0)
+
+DEPENDENCIES:
+  - Kitsunebi (from `../`)
+
+EXTERNAL SOURCES:
+  Kitsunebi:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Kitsunebi: 874de28fe6e9eec873a5aa81cb800d80b68246e0
+
+PODFILE CHECKSUM: 55881a78915f9ad2d0937cfdf549a5fe7525a9eb
+
+COCOAPODS: 1.5.0
