@@ -11,7 +11,7 @@ final class FPSKeeper {
   private var beforeTimeStamp: CFTimeInterval? = nil
   private let timeInterval: CFTimeInterval
   init(fps: Int) {
-    self.timeInterval = 1.0 / CFTimeInterval(fps)
+    self.timeInterval = floor(1.0 / CFTimeInterval(fps) * 1000.0) / 1000.0
   }
   
   func clear() {

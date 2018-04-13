@@ -272,8 +272,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
   @discardableResult
   private func drawImage(with image: CIImage, alphaImage: CIImage) -> Bool {
     guard applicationHandler.isActive else { return false }
-    
-    let scale: CGFloat = 1.0
+    let scale: CGFloat = 0.5 //TODO: custom
     let image = image.transformed(by: .init(scaleX: scale, y: scale))
     let alphaImage = alphaImage.transformed(by: .init(scaleX: scale, y: scale))
     

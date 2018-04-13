@@ -42,7 +42,7 @@ internal class KBVideoEngine: NSObject {
     displayLink.isPaused = true
     displayLink.frameInterval = 0 //best effort
     while isRunningTheread {
-      RunLoop.current.run(until: Date(timeIntervalSinceNow: 1/30))
+      RunLoop.current.run(until: Date(timeIntervalSinceNow: 1/60))
     }
   }
   
