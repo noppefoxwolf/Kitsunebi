@@ -21,7 +21,7 @@ struct GLESHelper {
     var source = UnsafePointer<GLchar>(shaderStringUTF8)
     
     if source == nil {
-      print("STGLPreview : failed to load vertex shader")
+      print("failed to load vertex shader")
       return false
     }
     

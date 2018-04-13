@@ -16,74 +16,53 @@ internal protocol KBVideoEngineUpdateDelegate: class {
 
 public protocol KBVideoEngineDelegate: class {
   func engineDidFinishPlaying(_ engine: KBVideoEngine)
-  func engineDidCancelPlaying(_ engine: KBVideoEngine)
 }
 
 public class KBVideoEngine: NSObject {
-  private let outputSettings: [String : Any] = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
-  private let mainAsset: AVURLAsset
-  private let alphaAsset: AVURLAsset
-  private var mainAssetReader: AVAssetReader!
-  private var alphaAssetReader: AVAssetReader!
-  private var mainOutput: AVAssetReaderTrackOutput!
-  private var alphaOutput: AVAssetReaderTrackOutput!
+  private let mainAsset: KBAsset
+  private let alphaAsset: KBAsset
+  private let fpsKeeper: FPSKeeper
+  private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.update))
   public weak var delegate: KBVideoEngineDelegate? = nil
   internal weak var updateDelegate: KBVideoEngineUpdateDelegate? = nil
-  private var previousFrameTime = kCMTimeZero
-  private var previousActualFrameTime = CFAbsoluteTimeGetCurrent()
-  private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.update))
-  private var beforeTimeStamp: CFTimeInterval? = nil
-  private let timeInterval: CFTimeInterval
-  private let cache = CIImageCache()
+  private var isRunningTheread = true
+  private lazy var renderThread: Thread = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.threadLoop), object: nil)
   
   public init(mainVideoUrl: URL, alphaVideoUrl: URL, fps: Int) {
-    mainAsset = AVURLAsset(url: mainVideoUrl)
-    alphaAsset = AVURLAsset(url: alphaVideoUrl)
-    timeInterval = 1.0 / CFTimeInterval(fps)
+    mainAsset = KBAsset(url: mainVideoUrl)
+    alphaAsset = KBAsset(url: alphaVideoUrl)
+    fpsKeeper = FPSKeeper(fps: fps)
     super.init()
-    
-    let thread = Thread(target: self, selector: #selector(self.threadLoop), object: nil)
-    thread.start()
+    renderThread.start()
   }
   
-  @objc func threadLoop() -> Void {
+  @objc private func threadLoop() -> Void {
     print("thread loop done!")
-    self.displayLink.add(to: .current, forMode: .commonModes)
-    self.displayLink.isPaused = true
+    displayLink.add(to: .current, forMode: .commonModes)
+    displayLink.isPaused = true
     displayLink.frameInterval = 0 //best effort
-    while true {
+    while isRunningTheread {
       RunLoop.current.run(until: Date(timeIntervalSinceNow: 1/30))
     }
   }
   
+  func purge() {
+    isRunningTheread = false
+  }
+  
   deinit {
+    displayLink.remove(from: .current, forMode: .commonModes)
     displayLink.invalidate()
   }
   
   private func reset() throws {
-    mainAssetReader = try AVAssetReader(asset: mainAsset)
-    alphaAssetReader = try AVAssetReader(asset: alphaAsset)
-    mainOutput = AVAssetReaderTrackOutput(track: mainAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
-    alphaOutput = AVAssetReaderTrackOutput(track: alphaAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
-    if mainAssetReader.canAdd(mainOutput) {
-      mainAssetReader.add(mainOutput)
-    } else {
-      throw NSError(domain: "", code: 12000, userInfo: nil)
-    }
-    if alphaAssetReader.canAdd(alphaOutput) {
-      alphaAssetReader.add(alphaOutput)
-    } else {
-      throw NSError(domain: "", code: 12000, userInfo: nil)
-    }
-    mainOutput.alwaysCopiesSampleData = false
-    alphaOutput.alwaysCopiesSampleData = false
-    mainAssetReader.startReading()
-    alphaAssetReader.startReading()
+    try mainAsset.reset()
+    try alphaAsset.reset()
   }
   
   private func cancelReading() {
-    mainAssetReader.cancelReading()
-    alphaAssetReader.cancelReading()
+    mainAsset.cancelReading()
+    alphaAsset.cancelReading()
   }
   
   public func play() throws {
@@ -99,33 +78,15 @@ public class KBVideoEngine: NSObject {
     displayLink.isPaused = false
   }
   
-  public func cancel() {
-    let running = mainAssetReader.status != .completed && mainAssetReader.status != .cancelled
-    cancelReading()
-    updateDelegate?.didReceiveError(nil)
-    displayLink.isPaused = true
-    if running {
-      delegate?.engineDidCancelPlaying(self)
-    }
-  }
-  
   private func finish() {
-    beforeTimeStamp = nil
-    updateDelegate?.didCompleted()
     displayLink.isPaused = true
+    fpsKeeper.clear()
+    updateDelegate?.didCompleted()
     delegate?.engineDidFinishPlaying(self)
   }
   
-  
   @objc private func update(_ link: CADisplayLink) {
-    
-    if let beforeTimeStamp = beforeTimeStamp {
-      guard timeInterval <= link.timestamp - beforeTimeStamp else {
-        return
-      }
-    }
-    beforeTimeStamp = link.timestamp
-
+    guard fpsKeeper.checkPast1Frame(link) else { return }
     FPSDebugger.shared.update(link)
     
     autoreleasepool(invoking: { [weak self] in
@@ -135,56 +96,24 @@ public class KBVideoEngine: NSObject {
   
   private func updateFrame() {
     guard !displayLink.isPaused else { return }
-    switch mainAssetReader.status {
-    case .completed: finish(); return
-    default: break
+    if mainAsset.status == .completed || alphaAsset.status == .completed {
+      finish()
+      return
     }
-    guard let (main, alpha) = fetchNextCIImages() else { return }
-    updateDelegate?.didOutputFrame(main, alphaImage: alpha)
+    do {
+      let (main, alpha) = try fetchNextCIImages()
+      updateDelegate?.didOutputFrame(main, alphaImage: alpha)
+    } catch (let error) {
+      updateDelegate?.didReceiveError(error)
+      finish()
+    }
   }
   
-  private func fetchNextCIImages() -> (CIImage, CIImage)? {
-    if let error = mainAssetReader.error {
-      updateDelegate?.didReceiveError(error)
-      finish()
-      return nil
-    }
-    guard mainAssetReader.status == .reading else { return nil }
-    guard let main = mainOutput.fetchNextCIImage() else { return nil }
-    
-    if let error = alphaAssetReader.error {
-      updateDelegate?.didReceiveError(error)
-      finish()
-      return nil
-    }
-    guard alphaAssetReader.status == .reading else { return nil }
-    guard let alpha = alphaOutput.fetchNextCIImage() else { return nil }
-    
+  private func fetchNextCIImages() throws -> (CIImage, CIImage) {
+    let main = try mainAsset.fetchNextCIImage()
+    let alpha = try alphaAsset.fetchNextCIImage()
     return (main, alpha)
   }
 }
 
-extension AVAssetReaderTrackOutput {
-  func fetchNextCIImage() -> CIImage? {
-    guard let sampleBuffer = copyNextSampleBuffer() else { return nil }
-    guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
-    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-    let image = CIImage(cvImageBuffer: pixelBuffer)
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-    return image
-  }
-}
 
-class CIImageCache {
-  private var cache: [(CIImage, CIImage)] = []
-  private let cacheLimit: Int = 3
-  
-  func fetch() -> (CIImage, CIImage)? {
-    guard cache.count > 0 else { return nil }
-    return cache.removeFirst()
-  }
-  
-  func store(images: (CIImage, CIImage)) {
-    cache.append(images)
-  }
-}

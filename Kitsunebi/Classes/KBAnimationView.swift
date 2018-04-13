@@ -23,6 +23,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   
   private var _cvTextureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
+  private var applicationHandler = KBApplicationHandler()
   
   internal let vsh: String = """
   attribute vec4 position;
@@ -53,6 +54,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   internal var engineInstance: KBVideoEngine? = nil
   
   public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) {
+    engineInstance?.purge()
     engineInstance = KBVideoEngine(mainVideoUrl: mainVideoURL,
                                    alphaVideoUrl: alphaVideoURL,
                                    fps: fps)
@@ -65,31 +67,37 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   }
   
   public init?(frame: CGRect, context: EAGLContext = EAGLContext(api: .openGLES2)!) {
-    glContext = context //２つ作らないとだめかも
+    glContext = context
     glContext.isMultiThreaded = true
     ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
     super.init(frame: frame)
-    backgroundColor = .clear
-    configureLayer()
-    guard glContext.use() else { return nil }
-    guard createCache() else { return nil }
-    guard createFramebuffers() else { return nil }
-    load(for: &displayProgram, vsh: vsh, fsh: fsh)
+    guard prepare() else { return nil }
   }
   
-  private func configureLayer() {
+  required public init?(coder aDecoder: NSCoder) {
+    glContext = EAGLContext(api: .openGLES2)!
+    glContext.isMultiThreaded = true
+    ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
+    super.init(coder: aDecoder)
+    guard prepare() else { return nil }
+  }
+  
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+    destroyFramebuffer()
+  }
+  
+  private func prepare() -> Bool {
+    backgroundColor = .clear
     let eaglLayer: CAEAGLLayer = self.layer as! CAEAGLLayer
     eaglLayer.isOpaque = false
     eaglLayer.drawableProperties = [kEAGLDrawablePropertyRetainedBacking : false,
                                     kEAGLDrawablePropertyColorFormat : kEAGLColorFormatRGBA8]
-  }
-  
-  required public init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  deinit {
-    destroyFramebuffer()
+    guard glContext.use() else { return false }
+    guard createCache() else { return false }
+    guard createFramebuffers() else { return false }
+    load(for: &displayProgram, vsh: vsh, fsh: fsh)
+    return true
   }
   
   override public func layoutSubviews() {
@@ -241,14 +249,24 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   }
   
   func didReceiveError(_ error: Error?) {
+    clear()
   }
   
   func didCompleted() {
+    clear()
+  }
+  
+  private func clear() {
+    glClearColor(0, 0, 0, 0)
+    glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
+    glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
   }
   
   @discardableResult
   private func drawImage(with image: CIImage, alphaImage: CIImage) -> Bool {
-//    guard UIApplication.shared.applicationState == .active else { return false }
+    guard applicationHandler.isActive else { return false }
+    
     let scale: CGFloat = 1.0
     let image = image.transformed(by: .init(scaleX: scale, y: scale))
     let alphaImage = alphaImage.transformed(by: .init(scaleX: scale, y: scale))
