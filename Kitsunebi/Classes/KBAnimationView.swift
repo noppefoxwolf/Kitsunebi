@@ -64,6 +64,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
                                    alphaVideoUrl: alphaVideoURL,
                                    fps: fps)
     engineInstance?.updateDelegate = self
+    engineInstance?.delegate = self
     try! engineInstance?.play()
   }
   
