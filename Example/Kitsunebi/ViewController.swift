@@ -9,11 +9,12 @@
 import UIKit
 import Kitsunebi
 
-final class ViewController: UIViewController {
+final class ViewController: UIViewController, KBAnimationViewDelegate {
   private lazy var playerView: KBAnimationView = KBAnimationView(frame: view.bounds)!
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    playerView.delegate = self
     view.addSubview(playerView)
     view.backgroundColor = UIColor.green
   }
@@ -22,6 +23,11 @@ final class ViewController: UIViewController {
     playerView.play(mainVideoURL: Bundle.main.url(forResource: "gift", withExtension: "mp4")!,
                     alphaVideoURL: Bundle.main.url(forResource: "alpha", withExtension: "mp4")!,
                     fps: 30)
+    print("start")
+  }
+  
+  func animationViewDidFinish(_ animationView: KBAnimationView) {
+    print("finish")
   }
 }
 

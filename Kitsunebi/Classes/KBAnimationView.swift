@@ -7,7 +7,11 @@
 
 import UIKit
 
-final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
+public protocol KBAnimationViewDelegate: class {
+  func animationViewDidFinish(_ animationView: KBAnimationView)
+}
+
+final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
   private var backingWidth: GLint = 0
   private var backingHeight: GLint = 0
   private var viewRenderbuffer: GLuint = 0
@@ -24,6 +28,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   private var _cvTextureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
+  public weak var delegate: KBAnimationViewDelegate? = nil
   
   internal let vsh: String = """
   attribute vec4 position;
@@ -413,5 +418,9 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
     } else {
       return UIEdgeInsets.zero
     }
+  }
+  
+  internal func engineDidFinishPlaying(_ engine: KBVideoEngine) {
+    delegate?.animationViewDidFinish(self)
   }
 }

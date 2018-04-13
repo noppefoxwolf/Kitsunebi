@@ -14,16 +14,16 @@ internal protocol KBVideoEngineUpdateDelegate: class {
   func didCompleted()
 }
 
-public protocol KBVideoEngineDelegate: class {
+internal protocol KBVideoEngineDelegate: class {
   func engineDidFinishPlaying(_ engine: KBVideoEngine)
 }
 
-public class KBVideoEngine: NSObject {
+internal class KBVideoEngine: NSObject {
   private let mainAsset: KBAsset
   private let alphaAsset: KBAsset
   private let fpsKeeper: FPSKeeper
   private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.update))
-  public weak var delegate: KBVideoEngineDelegate? = nil
+  internal weak var delegate: KBVideoEngineDelegate? = nil
   internal weak var updateDelegate: KBVideoEngineUpdateDelegate? = nil
   private var isRunningTheread = true
   private lazy var renderThread: Thread = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.threadLoop), object: nil)
