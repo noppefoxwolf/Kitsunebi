@@ -20,7 +20,7 @@ public protocol KBVideoEngineDelegate: class {
 }
 
 public class KBVideoEngine: NSObject {
-  private let outputSettings = [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_32BGRA]
+  private let outputSettings: [String : Any] = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
   private let mainAsset: AVURLAsset
   private let alphaAsset: AVURLAsset
   private var mainAssetReader: AVAssetReader!
@@ -34,6 +34,7 @@ public class KBVideoEngine: NSObject {
   private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.update))
   private var beforeTimeStamp: CFTimeInterval? = nil
   private let timeInterval: CFTimeInterval
+  private let cache = CIImageCache()
   
   public init(mainVideoUrl: URL, alphaVideoUrl: URL, fps: Int) {
     mainAsset = AVURLAsset(url: mainVideoUrl)
@@ -62,8 +63,8 @@ public class KBVideoEngine: NSObject {
   private func reset() throws {
     mainAssetReader = try AVAssetReader(asset: mainAsset)
     alphaAssetReader = try AVAssetReader(asset: alphaAsset)
-    mainOutput = AVAssetReaderTrackOutput(track: mainAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings as [String : Any])
-    alphaOutput = AVAssetReaderTrackOutput(track: alphaAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings as [String : Any])
+    mainOutput = AVAssetReaderTrackOutput(track: mainAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
+    alphaOutput = AVAssetReaderTrackOutput(track: alphaAsset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
     if mainAssetReader.canAdd(mainOutput) {
       mainAssetReader.add(mainOutput)
     } else {
@@ -115,18 +116,18 @@ public class KBVideoEngine: NSObject {
     delegate?.engineDidFinishPlaying(self)
   }
   
-  var prev: TimeInterval = 0.0
+  
   @objc private func update(_ link: CADisplayLink) {
-    print("\(Int(1.0 / (link.timestamp - prev)))fps")
-    prev = link.timestamp
     
-    //    if let beforeTimeStamp = beforeTimeStamp {
-    //      guard timeInterval <= link.timestamp - beforeTimeStamp else {
-    //        return
-    //      }
-    //    }
-    //    beforeTimeStamp = link.timestamp
-    //
+    if let beforeTimeStamp = beforeTimeStamp {
+      guard timeInterval <= link.timestamp - beforeTimeStamp else {
+        return
+      }
+    }
+    beforeTimeStamp = link.timestamp
+
+    FPSDebugger.shared.update(link)
+    
     autoreleasepool(invoking: { [weak self] in
       self?.updateFrame()
     })
@@ -171,5 +172,19 @@ extension AVAssetReaderTrackOutput {
     let image = CIImage(cvImageBuffer: pixelBuffer)
     CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
     return image
+  }
+}
+
+class CIImageCache {
+  private var cache: [(CIImage, CIImage)] = []
+  private let cacheLimit: Int = 3
+  
+  func fetch() -> (CIImage, CIImage)? {
+    guard cache.count > 0 else { return nil }
+    return cache.removeFirst()
+  }
+  
+  func store(images: (CIImage, CIImage)) {
+    cache.append(images)
   }
 }

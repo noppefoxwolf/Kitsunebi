@@ -218,10 +218,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = FBQ6Z8AF3U;
 						LastSwiftMigration = 0900;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = FBQ6Z8AF3U;
 						LastSwiftMigration = 0900;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
@@ -477,7 +479,9 @@
 			baseConfigurationReference = C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -492,7 +496,9 @@
 			baseConfigurationReference = B6601D19AF70E61C6D38E91E /* Pods-Kitsunebi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -506,6 +512,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C76B8A08CF3BA0FC8B959D07 /* Pods-Kitsunebi_Tests.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -527,6 +534,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 80E0FF848D4AAC1267BDE663 /* Pods-Kitsunebi_Tests.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",

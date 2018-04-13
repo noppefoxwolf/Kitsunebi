@@ -1,9 +1,6 @@
 # Kitsunebi
 
-[![CI Status](http://img.shields.io/travis/Tomoya Hirano/Kitsunebi.svg?style=flat)](https://travis-ci.org/Tomoya Hirano/Kitsunebi)
-[![Version](https://img.shields.io/cocoapods/v/Kitsunebi.svg?style=flat)](http://cocoapods.org/pods/Kitsunebi)
-[![License](https://img.shields.io/cocoapods/l/Kitsunebi.svg?style=flat)](http://cocoapods.org/pods/Kitsunebi)
-[![Platform](https://img.shields.io/cocoapods/p/Kitsunebi.svg?style=flat)](http://cocoapods.org/pods/Kitsunebi)
+Overlay alpha channel video animation player view using OpenGLES.
 
 ## Example
 
@@ -19,6 +16,11 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod 'Kitsunebi'
 ```
+
+## TODO
+
+- [ ] fps
+- [ ] thread
 
 ## Author
 

@@ -28,10 +28,9 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   attribute vec4 position;
   attribute vec4 inputTextureCoordinate;
   varying vec2 textureCoordinate;
-  void main()
-  {
-  gl_Position = position;
-  textureCoordinate = inputTextureCoordinate.xy;
+  void main() {
+    gl_Position = position;
+    textureCoordinate = inputTextureCoordinate.xy;
   }
   """
   
@@ -40,8 +39,8 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   uniform sampler2D videoFrame;
   uniform sampler2D videoFrame2;
   void main() {
-    lowp vec4 color = texture2D(videoFrame, textureCoordinate);
-    lowp vec4 colorAlpha = texture2D(videoFrame2, textureCoordinate);
+    highp vec4 color = texture2D(videoFrame, textureCoordinate);
+    highp vec4 colorAlpha = texture2D(videoFrame2, textureCoordinate);
     gl_FragColor = vec4(color.r, color.g, color.b, colorAlpha.r);
   }
   """
@@ -54,7 +53,9 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   internal var engineInstance: KBVideoEngine? = nil
   
   public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) {
-    engineInstance = KBVideoEngine(mainVideoUrl: mainVideoURL, alphaVideoUrl: alphaVideoURL, fps: fps)
+    engineInstance = KBVideoEngine(mainVideoUrl: mainVideoURL,
+                                   alphaVideoUrl: alphaVideoURL,
+                                   fps: fps)
     engineInstance?.updateDelegate = self
     try! engineInstance?.play()
   }
@@ -65,8 +66,10 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   
   public init?(frame: CGRect, context: EAGLContext = EAGLContext(api: .openGLES2)!) {
     glContext = context //２つ作らないとだめかも
+    glContext.isMultiThreaded = true
     ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
     super.init(frame: frame)
+    backgroundColor = .clear
     configureLayer()
     guard glContext.use() else { return nil }
     guard createCache() else { return nil }
@@ -143,8 +146,8 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
     glGenTextures(1, &positionRenderTexture)
     guard positionRenderTexture != 0 else { return false }
     glBindTexture(GLenum(GL_TEXTURE_2D), positionRenderTexture)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_LINEAR)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_LINEAR)
+    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_NEAREST)
+    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST)
     glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
     glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
     glHint(GLenum(GL_GENERATE_MIPMAP_HINT), GLenum(GL_NICEST))
@@ -157,6 +160,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   }
   
   private func destroyFramebuffer() {
+    glContext.use()
     if viewFramebuffer != 0 {
       glDeleteFramebuffers(1, &viewFramebuffer)
       viewFramebuffer = 0
@@ -242,9 +246,12 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
   func didCompleted() {
   }
   
-  
+  @discardableResult
   private func drawImage(with image: CIImage, alphaImage: CIImage) -> Bool {
-    //    guard UIApplication.shared.applicationState == .active else { return }
+//    guard UIApplication.shared.applicationState == .active else { return false }
+    let scale: CGFloat = 1.0
+    let image = image.transformed(by: .init(scaleX: scale, y: scale))
+    let alphaImage = alphaImage.transformed(by: .init(scaleX: scale, y: scale))
     
     // resize //
     let frameWidth = image.extent.width
@@ -264,7 +271,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
                                      options,
                                      &pxbuffer)
     if status != kCVReturnSuccess || pxbuffer == nil {
-      assertionFailure()
+      return false
     }
     
     ciContext.render(image, to: pxbuffer!)
@@ -292,7 +299,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate {
                                       options,
                                       &pxbuffer2)
     if status2 != kCVReturnSuccess || pxbuffer2 == nil {
-      assertionFailure()
+      return false
     }
     
     ciContext.render(alphaImage, to: pxbuffer2!)

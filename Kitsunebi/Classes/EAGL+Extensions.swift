@@ -8,6 +8,7 @@
 import UIKit
 
 extension EAGLContext {
+  @discardableResult
   func use() -> Bool {
     guard EAGLContext.current() != self else { return true }
     return EAGLContext.setCurrent(self)
