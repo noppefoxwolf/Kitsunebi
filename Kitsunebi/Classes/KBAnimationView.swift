@@ -28,7 +28,25 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
   private var textureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
+  
+  public var quality: Quality = .high
   public weak var delegate: KBAnimationViewDelegate? = nil
+  
+  public enum Quality {
+    case veryLow
+    case low
+    case middle
+    case high
+    
+    var baseTextureWidth: CGFloat {
+      switch self {
+      case .veryLow: return 256
+      case .low: return 512
+      case .middle: return 1024
+      case .high: return 2048
+      }
+    }
+  }
   
   internal let vsh: String = """
   attribute vec4 position;
@@ -272,9 +290,10 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
   @discardableResult
   private func drawImage(with image: CIImage, alphaImage: CIImage) -> Bool {
     guard applicationHandler.isActive else { return false }
-    let scale: CGFloat = 0.5 //TODO: custom
-    let image = image.transformed(by: .init(scaleX: scale, y: scale))
-    let alphaImage = alphaImage.transformed(by: .init(scaleX: scale, y: scale))
+    let contentScale: CGFloat = scale(of: quality, withExtent: image.extent)
+    
+    let image = image.transformed(by: .init(scaleX: contentScale, y: contentScale))
+    let alphaImage = alphaImage.transformed(by: .init(scaleX: contentScale, y: contentScale))
     let options = [kCVPixelBufferIOSurfacePropertiesKey : [:]] as CFDictionary
     var status: CVReturn = kCVReturnError
     // resize //
@@ -394,6 +413,11 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
     
     glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
     return glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
+  }
+  
+  private func scale(of quality: Quality, withExtent extent: CGRect) -> CGFloat {
+    let length = max(extent.width, extent.height)
+    return min((quality.baseTextureWidth / length), 1.0)
   }
 
   private func fillEdge(from extent: CGRect) -> UIEdgeInsets {

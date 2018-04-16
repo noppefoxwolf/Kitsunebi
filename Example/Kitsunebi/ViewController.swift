@@ -15,6 +15,7 @@ final class ViewController: UIViewController, KBAnimationViewDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     playerView.delegate = self
+    playerView.quality = .low
     view.addSubview(playerView)
     view.backgroundColor = UIColor.green
   }

@@ -37,10 +37,13 @@ internal class KBVideoEngine: NSObject {
   }
   
   @objc private func threadLoop() -> Void {
-    print("thread loop done!")
     displayLink.add(to: .current, forMode: .commonModes)
     displayLink.isPaused = true
-    displayLink.frameInterval = 1 //best effort
+    if #available(iOS 10.0, *) {
+      displayLink.preferredFramesPerSecond = 0
+    } else {
+      displayLink.frameInterval = 1
+    }
     while isRunningTheread {
       RunLoop.current.run(until: Date(timeIntervalSinceNow: 1/60))
     }
