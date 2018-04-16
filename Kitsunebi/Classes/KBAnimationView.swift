@@ -25,7 +25,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
   private let glContext: EAGLContext
   private let ciContext: CIContext
   
-  private var _cvTextureCache: CVOpenGLESTextureCache? = nil
+  private var textureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
   public weak var delegate: KBAnimationViewDelegate? = nil
@@ -116,7 +116,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
                                            nil,
                                            glContext,
                                            nil,
-                                           &_cvTextureCache)
+                                           &textureCache)
     return err != kCVReturnError
   }
   
@@ -275,82 +275,74 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
     let scale: CGFloat = 0.5 //TODO: custom
     let image = image.transformed(by: .init(scaleX: scale, y: scale))
     let alphaImage = alphaImage.transformed(by: .init(scaleX: scale, y: scale))
-    
+    let options = [kCVPixelBufferIOSurfacePropertiesKey : [:]] as CFDictionary
+    var status: CVReturn = kCVReturnError
     // resize //
     let frameWidth = image.extent.width
     let frameHeight = image.extent.height
     
     // main //
+    var textureOrigin: CVOpenGLESTexture? = nil
+    var textureOriginInput: GLuint = GLuint()
+    var originPixelBuffer: CVPixelBuffer? = nil
+    status = CVPixelBufferCreate(kCFAllocatorSystemDefault,
+                                 Int(frameWidth),
+                                 Int(frameHeight),
+                                 kCVPixelFormatType_32BGRA,
+                                 options,
+                                 &originPixelBuffer)
+    guard status == kCVReturnSuccess && originPixelBuffer != nil else { return false }
     
-    var _cvTextureOrigin: CVOpenGLESTexture? = nil
-    var _textureOriginInput: GLuint = GLuint()
+    ciContext.render(image, to: originPixelBuffer!)
     
-    let options = [kCVPixelBufferIOSurfacePropertiesKey : [:]] as CFDictionary
-    var pxbuffer: CVPixelBuffer? = nil
-    let status = CVPixelBufferCreate(kCFAllocatorSystemDefault,
-                                     Int(frameWidth),
-                                     Int(frameHeight),
-                                     kCVPixelFormatType_32BGRA,
-                                     options,
-                                     &pxbuffer)
-    if status != kCVReturnSuccess || pxbuffer == nil {
-      return false
-    }
+    guard originPixelBuffer != nil else { return false }
     
-    ciContext.render(image, to: pxbuffer!)
+    CVPixelBufferLockBaseAddress(originPixelBuffer!, .readOnly)
     
-    guard let pixelBuffer = pxbuffer else { return false }
-    
-    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-    
-    guard GLESHelper.setupOriginTexture(with: pixelBuffer,
-                                        texture: &_cvTextureOrigin,
-                                        textureCahce: _cvTextureCache!,
-                                        textureOriginInput: &_textureOriginInput,
+    guard GLESHelper.setupOriginTexture(with: originPixelBuffer!,
+                                        texture: &textureOrigin,
+                                        textureCahce: textureCache!,
+                                        textureOriginInput: &textureOriginInput,
                                         width: GLsizei(frameWidth),
                                         height: GLsizei(frameHeight)) else { return false }
     
     // alpha //
     
-    var _cvTextureOrigin2: CVOpenGLESTexture? = nil
-    var _textureOriginInput2: GLuint = GLuint()
-    var pxbuffer2: CVPixelBuffer? = nil
-    let status2 = CVPixelBufferCreate(kCFAllocatorSystemDefault,
-                                      Int(frameWidth),
-                                      Int(frameHeight),
-                                      kCVPixelFormatType_32BGRA,
-                                      options,
-                                      &pxbuffer2)
-    if status2 != kCVReturnSuccess || pxbuffer2 == nil {
-      return false
-    }
+    var alphaTextureOrigin: CVOpenGLESTexture? = nil
+    var alphaTextureOriginInput: GLuint = GLuint()
+    var alphaPixelBuffer: CVPixelBuffer? = nil
+    status = CVPixelBufferCreate(kCFAllocatorSystemDefault,
+                                 Int(frameWidth),
+                                 Int(frameHeight),
+                                 kCVPixelFormatType_32BGRA,
+                                 options,
+                                 &alphaPixelBuffer)
+    guard status == kCVReturnSuccess && alphaPixelBuffer != nil else { return false }
     
-    ciContext.render(alphaImage, to: pxbuffer2!)
+    ciContext.render(alphaImage, to: alphaPixelBuffer!)
     
-    guard let pixelBuffer2 = pxbuffer2 else { return false }
+    CVPixelBufferLockBaseAddress(alphaPixelBuffer!, .readOnly)
     
-    CVPixelBufferLockBaseAddress(pixelBuffer2, .readOnly)
-    
-    guard GLESHelper.setupOriginTexture(with: pixelBuffer2,
-                             texture: &_cvTextureOrigin2,
-                             textureCahce: _cvTextureCache!,
-                             textureOriginInput: &_textureOriginInput2,
+    guard GLESHelper.setupOriginTexture(with: alphaPixelBuffer!,
+                             texture: &alphaTextureOrigin,
+                             textureCahce: textureCache!,
+                             textureOriginInput: &alphaTextureOriginInput,
                              width: GLsizei(frameWidth),
                              height: GLsizei(frameHeight)) else { return false }
     
     // render //
-    drawFrame(with: _textureOriginInput, alphaTexture: _textureOriginInput2, edge: fillEdge(from: image.extent))
+    drawFrame(with: textureOriginInput, alphaTexture: alphaTextureOriginInput, edge: fillEdge(from: image.extent))
     
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-    CVPixelBufferUnlockBaseAddress(pixelBuffer2, .readOnly)
-    CVOpenGLESTextureCacheFlush(_cvTextureCache!, 0)
+    CVPixelBufferUnlockBaseAddress(originPixelBuffer!, .readOnly)
+    CVPixelBufferUnlockBaseAddress(alphaPixelBuffer!, .readOnly)
+    CVOpenGLESTextureCacheFlush(textureCache!, 0)
     
-    if _cvTextureOrigin != nil {
-      _cvTextureOrigin = nil
+    if textureOrigin != nil {
+      textureOrigin = nil
     }
     
-    if _cvTextureOrigin2 != nil {
-      _cvTextureOrigin2 = nil
+    if alphaTextureOrigin != nil {
+      alphaTextureOrigin = nil
     }
     return true
   }

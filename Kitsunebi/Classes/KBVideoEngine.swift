@@ -40,7 +40,7 @@ internal class KBVideoEngine: NSObject {
     print("thread loop done!")
     displayLink.add(to: .current, forMode: .commonModes)
     displayLink.isPaused = true
-    displayLink.frameInterval = 0 //best effort
+    displayLink.frameInterval = 1 //best effort
     while isRunningTheread {
       RunLoop.current.run(until: Date(timeIntervalSinceNow: 1/60))
     }
@@ -87,7 +87,10 @@ internal class KBVideoEngine: NSObject {
   
   @objc private func update(_ link: CADisplayLink) {
     guard fpsKeeper.checkPast1Frame(link) else { return }
-    FPSDebugger.shared.update(link)
+    
+    #if DEBUG
+      FPSDebugger.shared.update(link)
+    #endif
     
     autoreleasepool(invoking: { [weak self] in
       self?.updateFrame()
