@@ -7,20 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		37538BE82080497D00DBB4EB /* gift.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 37538BE62080497D00DBB4EB /* gift.mp4 */; };
-		37538BE92080497D00DBB4EB /* alpha.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 37538BE72080497D00DBB4EB /* alpha.mp4 */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		D779198220873F5D000C3E18 /* alpha.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D779198020873F5B000C3E18 /* alpha.mp4 */; };
+		D779198320873F5D000C3E18 /* main.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D779198120873F5C000C3E18 /* main.mp4 */; };
 		E2CAB7B5F04A203502BC5156 /* Pods_Kitsunebi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5132DBA2BB7A65D07CBA851 /* Pods_Kitsunebi_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		189F5007590E4ACCF8A3024B /* Kitsunebi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Kitsunebi.podspec; path = ../Kitsunebi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		37538BE62080497D00DBB4EB /* gift.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = gift.mp4; sourceTree = "<group>"; };
-		37538BE72080497D00DBB4EB /* alpha.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = alpha.mp4; sourceTree = "<group>"; };
 		52B48990017D52AA5985AE83 /* Pods_Kitsunebi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Kitsunebi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Kitsunebi_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kitsunebi_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -38,6 +36,8 @@
 		C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Example/Pods-Kitsunebi_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C76B8A08CF3BA0FC8B959D07 /* Pods-Kitsunebi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Tests/Pods-Kitsunebi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		CA14B7D7D40EAAE3D380AD89 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		D779198020873F5B000C3E18 /* alpha.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = alpha.mp4; sourceTree = "<group>"; };
+		D779198120873F5C000C3E18 /* main.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = main.mp4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,8 +75,8 @@
 		607FACD21AFB9204008FA782 /* Example for Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
-				37538BE72080497D00DBB4EB /* alpha.mp4 */,
-				37538BE62080497D00DBB4EB /* gift.mp4 */,
+				D779198020873F5B000C3E18 /* alpha.mp4 */,
+				D779198120873F5C000C3E18 /* main.mp4 */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -207,9 +207,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
-				37538BE92080497D00DBB4EB /* alpha.mp4 in Resources */,
-				37538BE82080497D00DBB4EB /* gift.mp4 in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
+				D779198220873F5D000C3E18 /* alpha.mp4 in Resources */,
+				D779198320873F5D000C3E18 /* main.mp4 in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

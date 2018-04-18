@@ -17,11 +17,11 @@ final class ViewController: UIViewController, KBAnimationViewDelegate {
     playerView.delegate = self
     playerView.quality = .low
     view.addSubview(playerView)
-    view.backgroundColor = UIColor.green
+    view.backgroundColor = UIColor.white
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    playerView.play(mainVideoURL: Bundle.main.url(forResource: "gift", withExtension: "mp4")!,
+    playerView.play(mainVideoURL: Bundle.main.url(forResource: "main", withExtension: "mp4")!,
                     alphaVideoURL: Bundle.main.url(forResource: "alpha", withExtension: "mp4")!,
                     fps: 30)
     print("start")
