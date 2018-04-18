@@ -1,3 +1,5 @@
+![](https://github.com/noppefoxwolf/Kitsunebi/blob/master/meta/repo-banner.png)
+
 # Kitsunebi
 
 Overlay alpha channel video animation player view using OpenGLES.
