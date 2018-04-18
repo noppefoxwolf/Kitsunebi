@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -28,10 +29,19 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="ztz-z8-CAn">
+                                <rect key="frame" x="87" y="104" width="200" height="121"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="Fj3-gN-Nxr"/>
+                                    <constraint firstAttribute="width" secondItem="ztz-z8-CAn" secondAttribute="height" multiplier="888:538" id="u3Y-5v-7rD"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="94F-hK-Res" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="9D8-Ka-Uyf"/>
+                            <constraint firstItem="ztz-z8-CAn" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="AQd-iX-m8y"/>
+                            <constraint firstItem="ztz-z8-CAn" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="84" id="GmK-0u-2XE"/>
                             <constraint firstAttribute="trailing" secondItem="94F-hK-Res" secondAttribute="trailing" id="J6a-aW-98g"/>
                             <constraint firstItem="94F-hK-Res" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="WvN-vu-OLc"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="94F-hK-Res" secondAttribute="bottom" id="lmP-rs-DVv"/>
@@ -42,4 +52,7 @@
             </objects>
         </scene>
     </scenes>
+    <resources>
+        <image name="logo.png" width="888" height="538"/>
+    </resources>
 </document>
