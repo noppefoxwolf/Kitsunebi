@@ -59,3 +59,7 @@ Tomoya Hirano, noppelabs@gmail.com
 ## License
 
 Kitsunebi is available under the MIT license. See the LICENSE file for more info.
+
+## Sample video file
+
+http://basic.ivory.ne.jp
