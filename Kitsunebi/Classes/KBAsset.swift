@@ -39,10 +39,10 @@ final class KBAsset {
     if let error = reader.error {
       throw error
     }
-    if reader.status != .reading {
+    if status != .reading {
       throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not reading"])
     }
-    if let image = output.fetchNextCIImage() {
+    if let image = output.copyNextCIImage() {
       return image
     } else {
       throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not return image"])
@@ -51,7 +51,7 @@ final class KBAsset {
 }
 
 extension AVAssetReaderTrackOutput {
-  func fetchNextCIImage() -> CIImage? {
+  internal func copyNextCIImage() -> CIImage? {
     guard let sampleBuffer = copyNextSampleBuffer() else { return nil }
     guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
     CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)

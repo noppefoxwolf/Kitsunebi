@@ -34,6 +34,7 @@ internal class KBVideoEngine: NSObject {
     fpsKeeper = FPSKeeper(fps: fps)
     super.init()
     renderThread.start()
+    
   }
   
   @objc private func threadLoop() -> Void {
@@ -74,10 +75,12 @@ internal class KBVideoEngine: NSObject {
   }
   
   public func pause() {
+    guard !isCompleted else { return }
     displayLink.isPaused = true
   }
   
   public func resume() {
+    guard !isCompleted else { return }
     displayLink.isPaused = false
   }
   
@@ -86,6 +89,7 @@ internal class KBVideoEngine: NSObject {
     fpsKeeper.clear()
     updateDelegate?.didCompleted()
     delegate?.engineDidFinishPlaying(self)
+    purge()
   }
   
   @objc private func update(_ link: CADisplayLink) {
@@ -100,9 +104,13 @@ internal class KBVideoEngine: NSObject {
     })
   }
   
+  private var isCompleted: Bool {
+    return mainAsset.status == .completed || alphaAsset.status == .completed
+  }
+  
   private func updateFrame() {
     guard !displayLink.isPaused else { return }
-    if mainAsset.status == .completed || alphaAsset.status == .completed {
+    if isCompleted {
       finish()
       return
     }

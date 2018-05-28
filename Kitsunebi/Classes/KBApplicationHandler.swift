@@ -7,38 +7,33 @@
 
 import UIKit
 
+protocol KBApplicationHandlerDelegate: class {
+  func willResignActive(_ notification: Notification)
+  func didBecomeActive(_ notification: Notification)
+}
+
 final class KBApplicationHandler {
-  var isActive: Bool = true
-  private var didBecomeActiveToken: NSObjectProtocol? = nil
-  private var didEnterBackgroundToken: NSObjectProtocol? = nil
+  private(set) var isActive: Bool = true
+  internal weak var delegate: KBApplicationHandlerDelegate? = nil
   
   init() {
-    addObserver()
+    let center = NotificationCenter.default
+    center.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
+    center.addObserver(self, selector: #selector(didBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
   }
   
   deinit {
-    removeObserver()
+    let center = NotificationCenter.default
+    center.removeObserver(self)
   }
   
-  private func addObserver() {
-    let center = NotificationCenter.default
-    didBecomeActiveToken = center.addObserver(forName: .UIApplicationDidBecomeActive, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-      self?.isActive = true
-    }
-    didEnterBackgroundToken = center.addObserver(forName: .UIApplicationDidEnterBackground, object: nil, queue: OperationQueue.main) { [weak self] (_) in
-      self?.isActive = false
-    }
+  @objc private func willResignActive(_ notification: Notification) {
+    isActive = false
+    delegate?.willResignActive(notification)
   }
   
-  private func removeObserver() {
-    let center = NotificationCenter.default
-    if let token = didBecomeActiveToken {
-      center.removeObserver(token)
-      didBecomeActiveToken = nil
-    }
-    if let token = didEnterBackgroundToken {
-      center.removeObserver(token)
-      didEnterBackgroundToken = nil
-    }
+  @objc private func didBecomeActive(_ notification: Notification) {
+    isActive = true
+    delegate?.didBecomeActive(notification)
   }
 }

@@ -95,6 +95,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
     glContext.isMultiThreaded = true
     ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
     super.init(frame: frame)
+    applicationHandler.delegate = self
     guard prepare() else { return nil }
   }
   
@@ -438,5 +439,14 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
   
   internal func engineDidFinishPlaying(_ engine: KBVideoEngine) {
     delegate?.animationViewDidFinish(self)
+  }
+}
+
+extension KBAnimationView: KBApplicationHandlerDelegate {
+  func didBecomeActive(_ notification: Notification) {
+    engineInstance?.resume()
+  }
+  func willResignActive(_ notification: Notification) {
+    engineInstance?.pause()
   }
 }
