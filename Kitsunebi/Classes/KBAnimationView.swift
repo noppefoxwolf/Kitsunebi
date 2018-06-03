@@ -11,7 +11,7 @@ public protocol KBAnimationViewDelegate: class {
   func animationViewDidFinish(_ animationView: KBAnimationView)
 }
 
-final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
+open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
   private var backingWidth: GLint = 0
   private var backingHeight: GLint = 0
   private var viewRenderbuffer: GLuint = 0
@@ -86,7 +86,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
     try! engineInstance?.play()
   }
   
-  override public class var layerClass: Swift.AnyClass {
+  override open class var layerClass: Swift.AnyClass {
     return CAEAGLLayer.self
   }
   
@@ -125,7 +125,7 @@ final public class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideo
     return true
   }
   
-  override public func layoutSubviews() {
+  override open func layoutSubviews() {
     super.layoutSubviews()
     threadsafeSize = bounds.size
   }

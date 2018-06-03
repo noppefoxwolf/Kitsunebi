@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Kitsunebi'
-  s.version          = '0.2.0'
+  s.version          = '0.3.0'
   s.summary          = 'Overlay alpha channel video animation player view.'
   s.description      = <<-DESC
 Overlay alpha channel video animation player view using OpenGLES.
