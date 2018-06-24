@@ -12,8 +12,6 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		D779198220873F5D000C3E18 /* alpha.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D779198020873F5B000C3E18 /* alpha.mp4 */; };
-		D779198320873F5D000C3E18 /* main.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D779198120873F5C000C3E18 /* main.mp4 */; };
 		D7791985208744A1000C3E18 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D7791984208744A0000C3E18 /* logo.png */; };
 		E2CAB7B5F04A203502BC5156 /* Pods_Kitsunebi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5132DBA2BB7A65D07CBA851 /* Pods_Kitsunebi_Example.framework */; };
 /* End PBXBuildFile section */
@@ -37,8 +35,6 @@
 		C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Example/Pods-Kitsunebi_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C76B8A08CF3BA0FC8B959D07 /* Pods-Kitsunebi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Tests/Pods-Kitsunebi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		CA14B7D7D40EAAE3D380AD89 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		D779198020873F5B000C3E18 /* alpha.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = alpha.mp4; sourceTree = "<group>"; };
-		D779198120873F5C000C3E18 /* main.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = main.mp4; sourceTree = "<group>"; };
 		D7791984208744A0000C3E18 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,8 +74,6 @@
 			isa = PBXGroup;
 			children = (
 				D7791984208744A0000C3E18 /* logo.png */,
-				D779198020873F5B000C3E18 /* alpha.mp4 */,
-				D779198120873F5C000C3E18 /* main.mp4 */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -212,8 +206,6 @@
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				D7791985208744A1000C3E18 /* logo.png in Resources */,
-				D779198220873F5D000C3E18 /* alpha.mp4 in Resources */,
-				D779198320873F5D000C3E18 /* main.mp4 in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
