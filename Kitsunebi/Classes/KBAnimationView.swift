@@ -23,30 +23,12 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   private var uniformLocation: Int32 = 0
   
   private let glContext: EAGLContext
-  private let ciContext: CIContext
   
   private var textureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
   
-  public var quality: Quality = .high
   public weak var delegate: KBAnimationViewDelegate? = nil
-  
-  public enum Quality {
-    case veryLow
-    case low
-    case middle
-    case high
-    
-    var baseTextureWidth: CGFloat {
-      switch self {
-      case .veryLow: return 256
-      case .low: return 512
-      case .middle: return 1024
-      case .high: return 2048
-      }
-    }
-  }
   
   internal let vsh: String = """
   attribute vec4 position;
@@ -93,7 +75,6 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   public init?(frame: CGRect, context: EAGLContext = EAGLContext(api: .openGLES2)!) {
     glContext = context
     glContext.isMultiThreaded = true
-    ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
     super.init(frame: frame)
     applicationHandler.delegate = self
     guard prepare() else { return nil }
@@ -102,7 +83,6 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   required public init?(coder aDecoder: NSCoder) {
     glContext = EAGLContext(api: .openGLES2)!
     glContext.isMultiThreaded = true
-    ciContext = CIContext(eaglContext: glContext, options: [kCIContextUseSoftwareRenderer : false])
     super.init(coder: aDecoder)
     guard prepare() else { return nil }
   }
@@ -269,8 +249,8 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     return true
   }
   
-  func didOutputFrame(_ image: CIImage, alphaImage: CIImage) {
-    drawImage(with: image, alphaImage: alphaImage)
+  func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
+    return drawImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
   }
   
   func didReceiveError(_ error: Error?) {
@@ -289,81 +269,36 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   }
   
   @discardableResult
-  private func drawImage(with image: CIImage, alphaImage: CIImage) -> Bool {
+  private func drawImage(with basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
     guard applicationHandler.isActive else { return false }
-    let contentScale: CGFloat = scale(of: quality, withExtent: image.extent)
-    
-    let image = image.transformed(by: .init(scaleX: contentScale, y: contentScale))
-    let alphaImage = alphaImage.transformed(by: .init(scaleX: contentScale, y: contentScale))
-    let options = [kCVPixelBufferIOSurfacePropertiesKey : [:]] as CFDictionary
-    var status: CVReturn = kCVReturnError
-    // resize //
-    let frameWidth = image.extent.width
-    let frameHeight = image.extent.height
+    let width = CVPixelBufferGetWidth(basePixelBuffer)
+    let height = CVPixelBufferGetHeight(basePixelBuffer)
+    let extent = CGRect(x: 0, y: 0, width: width, height: height)
     
     // main //
-    var textureOrigin: CVOpenGLESTexture? = nil
-    var textureOriginInput: GLuint = GLuint()
-    var originPixelBuffer: CVPixelBuffer? = nil
-    status = CVPixelBufferCreate(kCFAllocatorSystemDefault,
-                                 Int(frameWidth),
-                                 Int(frameHeight),
-                                 kCVPixelFormatType_32BGRA,
-                                 options,
-                                 &originPixelBuffer)
-    guard status == kCVReturnSuccess && originPixelBuffer != nil else { return false }
-    
-    ciContext.render(image, to: originPixelBuffer!)
-    
-    guard originPixelBuffer != nil else { return false }
-    
-    CVPixelBufferLockBaseAddress(originPixelBuffer!, .readOnly)
-    
-    guard GLESHelper.setupOriginTexture(with: originPixelBuffer!,
-                                        texture: &textureOrigin,
+    var baseTexture: CVOpenGLESTexture? = nil
+    var baseTextureName: GLuint = GLuint()
+    guard GLESHelper.setupOriginTexture(with: basePixelBuffer,
+                                        texture: &baseTexture,
                                         textureCahce: textureCache!,
-                                        textureOriginInput: &textureOriginInput,
-                                        width: GLsizei(frameWidth),
-                                        height: GLsizei(frameHeight)) else { return false }
+                                        textureOriginInput: &baseTextureName,
+                                        width: GLsizei(width),
+                                        height: GLsizei(height)) else { return false }
     
     // alpha //
-    
-    var alphaTextureOrigin: CVOpenGLESTexture? = nil
-    var alphaTextureOriginInput: GLuint = GLuint()
-    var alphaPixelBuffer: CVPixelBuffer? = nil
-    status = CVPixelBufferCreate(kCFAllocatorSystemDefault,
-                                 Int(frameWidth),
-                                 Int(frameHeight),
-                                 kCVPixelFormatType_32BGRA,
-                                 options,
-                                 &alphaPixelBuffer)
-    guard status == kCVReturnSuccess && alphaPixelBuffer != nil else { return false }
-    
-    ciContext.render(alphaImage, to: alphaPixelBuffer!)
-    
-    CVPixelBufferLockBaseAddress(alphaPixelBuffer!, .readOnly)
-    
-    guard GLESHelper.setupOriginTexture(with: alphaPixelBuffer!,
-                             texture: &alphaTextureOrigin,
-                             textureCahce: textureCache!,
-                             textureOriginInput: &alphaTextureOriginInput,
-                             width: GLsizei(frameWidth),
-                             height: GLsizei(frameHeight)) else { return false }
+    var alphaTexture: CVOpenGLESTexture? = nil
+    var alphaTextureName: GLuint = GLuint()
+    guard GLESHelper.setupOriginTexture(with: alphaPixelBuffer,
+                                        texture: &alphaTexture,
+                                        textureCahce: textureCache!,
+                                        textureOriginInput: &alphaTextureName,
+                                        width: GLsizei(width),
+                                        height: GLsizei(height)) else { return false }
     
     // render //
-    drawFrame(with: textureOriginInput, alphaTexture: alphaTextureOriginInput, edge: fillEdge(from: image.extent))
-    
-    CVPixelBufferUnlockBaseAddress(originPixelBuffer!, .readOnly)
-    CVPixelBufferUnlockBaseAddress(alphaPixelBuffer!, .readOnly)
+    drawFrame(with: baseTextureName, alphaTexture: alphaTextureName, edge: fillEdge(from: extent))
+
     CVOpenGLESTextureCacheFlush(textureCache!, 0)
-    
-    if textureOrigin != nil {
-      textureOrigin = nil
-    }
-    
-    if alphaTextureOrigin != nil {
-      alphaTextureOrigin = nil
-    }
     return true
   }
   
@@ -414,11 +349,6 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     
     glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
     return glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
-  }
-  
-  private func scale(of quality: Quality, withExtent extent: CGRect) -> CGFloat {
-    let length = max(extent.width, extent.height)
-    return min((quality.baseTextureWidth / length), 1.0)
   }
 
   private func fillEdge(from extent: CGRect) -> UIEdgeInsets {

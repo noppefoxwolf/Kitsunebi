@@ -63,3 +63,7 @@ Kitsunebi is available under the MIT license. See the LICENSE file for more info
 ## Sample video file
 
 http://basic.ivory.ne.jp
+
+
+## MEMO
+ffmpeg -i main.mp4  -i alpha.mp4 -filter_complex "nullsrc=size=1500x1334 [base];[0:v] setpts=PTS-STARTPTS, scale=750x1334 [left];[1:v] setpts=PTS-STARTPTS, scale=750x1334 [right];[base][left] overlay=shortest=1 [tmp1];[tmp1][right] overlay=shortest=1:x=750" output.mp4

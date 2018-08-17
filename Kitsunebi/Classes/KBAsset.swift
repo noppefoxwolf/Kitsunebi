@@ -35,6 +35,21 @@ final class KBAsset {
     reader.cancelReading()
   }
   
+  func copyNextImageBuffer() throws -> CVImageBuffer {
+    if let error = reader.error {
+      throw error
+    }
+    if status != .reading {
+      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not reading"])
+    }
+    if let sampleBuffer = output.copyNextSampleBuffer(), let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+      return imageBuffer
+    } else {
+      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not return image"])
+    }
+  }
+  
+  @available(*, deprecated: 1.0)
   func fetchNextCIImage() throws -> CIImage {
     if let error = reader.error {
       throw error

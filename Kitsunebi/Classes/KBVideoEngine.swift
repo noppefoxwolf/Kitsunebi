@@ -9,7 +9,7 @@ import AVFoundation
 import CoreImage
 
 internal protocol KBVideoEngineUpdateDelegate: class {
-  func didOutputFrame(_ image: CIImage, alphaImage: CIImage)
+  func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool
   func didReceiveError(_ error: Error?)
   func didCompleted()
 }
@@ -115,17 +115,17 @@ internal class KBVideoEngine: NSObject {
       return
     }
     do {
-      let (main, alpha) = try fetchNextCIImages()
-      updateDelegate?.didOutputFrame(main, alphaImage: alpha)
+      let (basePixelBuffer, alphaPixelBuffer) = try copyNextSampleBuffer()
+      updateDelegate?.didOutputFrame(basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
     } catch (let error) {
       updateDelegate?.didReceiveError(error)
       finish()
     }
   }
   
-  private func fetchNextCIImages() throws -> (CIImage, CIImage) {
-    let main = try mainAsset.fetchNextCIImage()
-    let alpha = try alphaAsset.fetchNextCIImage()
+  private func copyNextSampleBuffer() throws -> (CVImageBuffer, CVImageBuffer) {
+    let main = try mainAsset.copyNextImageBuffer()
+    let alpha = try alphaAsset.copyNextImageBuffer()
     return (main, alpha)
   }
 }
