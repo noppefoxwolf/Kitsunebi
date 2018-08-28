@@ -121,7 +121,7 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   
   @discardableResult
   private func createFramebuffers() -> Bool {
-    glEnable(GLenum(GL_TEXTURE_2D))
+    glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
     glDisable(GLenum(GL_DEPTH_TEST))
     
     // Onscreen framebuffer object
