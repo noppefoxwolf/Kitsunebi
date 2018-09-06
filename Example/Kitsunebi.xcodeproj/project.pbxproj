@@ -12,6 +12,8 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		D72C379721410B7800F6D22F /* ResourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72C379621410B7800F6D22F /* ResourceViewController.swift */; };
+		D72C379A21410B9E00F6D22F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72C379921410B9E00F6D22F /* Models.swift */; };
 		D7791985208744A1000C3E18 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D7791984208744A0000C3E18 /* logo.png */; };
 		E2CAB7B5F04A203502BC5156 /* Pods_Kitsunebi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5132DBA2BB7A65D07CBA851 /* Pods_Kitsunebi_Example.framework */; };
 /* End PBXBuildFile section */
@@ -35,6 +37,8 @@
 		C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Example/Pods-Kitsunebi_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C76B8A08CF3BA0FC8B959D07 /* Pods-Kitsunebi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Kitsunebi_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Kitsunebi_Tests/Pods-Kitsunebi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		CA14B7D7D40EAAE3D380AD89 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		D72C379621410B7800F6D22F /* ResourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceViewController.swift; sourceTree = "<group>"; };
+		D72C379921410B9E00F6D22F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		D7791984208744A0000C3E18 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,6 +77,8 @@
 		607FACD21AFB9204008FA782 /* Example for Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
+				D72C379821410B8E00F6D22F /* Model */,
+				D72C379521410B6700F6D22F /* Controller */,
 				D7791984208744A0000C3E18 /* logo.png */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
@@ -140,6 +146,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D72C379521410B6700F6D22F /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				D72C379621410B7800F6D22F /* ResourceViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		D72C379821410B8E00F6D22F /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D72C379921410B9E00F6D22F /* Models.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -176,7 +198,7 @@
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = FBQ6Z8AF3U;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -258,6 +280,8 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				D72C379721410B7800F6D22F /* ResourceViewController.swift in Sources */,
+				D72C379A21410B9E00F6D22F /* Models.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,7 +411,8 @@
 			baseConfigurationReference = C51F4927EC82A0BDD9730EEE /* Pods-Kitsunebi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -395,8 +420,8 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c436f97c-94c1-455d-a437-aa6ac87d1049";
-				PROVISIONING_PROFILE_SPECIFIER = "noppelabs-*";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 			};
@@ -407,8 +432,9 @@
 			baseConfigurationReference = B6601D19AF70E61C6D38E91E /* Pods-Kitsunebi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

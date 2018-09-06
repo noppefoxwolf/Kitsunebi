@@ -7,27 +7,59 @@
 //
 
 import UIKit
+import AVFoundation
 import Kitsunebi
 
-final class ViewController: UIViewController, KBAnimationViewDelegate {
-  private lazy var playerView: KBAnimationView = KBAnimationView(frame: view.bounds)!
+final class PreviewViewController: UIViewController {
+  private var currentResource: Resource? = nil
+  private lazy var camera: AVCaptureDevice? = .default(for: .video)
+  private lazy var cameraInput: AVCaptureDeviceInput? = try? .init(device: camera!)
+  private lazy var cameraSession: AVCaptureSession = .init()
+  private lazy var cameraLayer: AVCaptureVideoPreviewLayer = .init(session: cameraSession)
+  @IBOutlet private weak var backgroundContentView: UIImageView!
+  @IBOutlet private weak var playerView: KBAnimationView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    if TARGET_OS_SIMULATOR == 0 {
+      cameraSession.addInput(cameraInput!)
+      cameraLayer.frame = view.bounds
+      cameraLayer.videoGravity = .resizeAspectFill
+      backgroundContentView.image = nil
+      backgroundContentView.layer.insertSublayer(cameraLayer, at: 0)
+      cameraSession.startRunning()
+    }
     playerView.delegate = self
-    view.addSubview(playerView)
-    view.backgroundColor = UIColor.white
   }
   
-  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    playerView.play(mainVideoURL: Bundle.main.url(forResource: "main", withExtension: "mp4")!,
-                    alphaVideoURL: Bundle.main.url(forResource: "alpha", withExtension: "mp4")!,
-                    fps: 30)
-    print("start")
+  private func play() {
+    guard let resource = currentResource else { return }
+    playerView.play(mainVideoURL: resource.mainVideoURL,
+                    alphaVideoURL: resource.alphaVideoURL,
+                    fps: resource.fps)
   }
   
+  @IBAction func tappedResourceButton(_ sender: Any) {
+    let vc = ResourceViewController.make(selected: currentResource)
+    vc.delegate = self
+    let nc =  UINavigationController(rootViewController: vc)
+    present(nc, animated: true, completion: nil)
+  }
+}
+
+extension PreviewViewController: KBAnimationViewDelegate {
   func animationViewDidFinish(_ animationView: KBAnimationView) {
-    print("finish")
+    play()
+  }
+}
+
+extension PreviewViewController: ResourceViewControllerDelegate {
+  func resource(_ viewController: ResourceViewController,
+                didSelected resource: Resource) {
+    currentResource = resource
+    viewController.dismiss(animated: true, completion: { [weak self] in
+      self?.play()
+    })
   }
 }
 

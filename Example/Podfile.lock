@@ -1,5 +1,5 @@
 PODS:
-  - Kitsunebi (0.5.0)
+  - Kitsunebi (0.5.1)
 
 DEPENDENCIES:
   - Kitsunebi (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Kitsunebi: 335b147927d3636de99c1b7252f73a5ae77aef2b
+  Kitsunebi: a8a5f54ac777d6aa1c541e9769b4016ef874cc34
 
 PODFILE CHECKSUM: d2da9f7850741a0db3692c50632ebcd02082d0a5
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.5.2
