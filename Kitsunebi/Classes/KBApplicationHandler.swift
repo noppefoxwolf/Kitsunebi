@@ -18,8 +18,8 @@ final class KBApplicationHandler {
   
   init() {
     let center = NotificationCenter.default
-    center.addObserver(self, selector: #selector(willResignActive), name: .UIApplicationWillResignActive, object: nil)
-    center.addObserver(self, selector: #selector(didBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
+    center.addObserver(self, selector: #selector(willResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+    center.addObserver(self, selector: #selector(didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
   }
   
   deinit {

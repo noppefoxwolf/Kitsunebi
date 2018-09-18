@@ -9,6 +9,7 @@ import AVFoundation
 import CoreImage
 
 internal protocol KBVideoEngineUpdateDelegate: class {
+  @discardableResult
   func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool
   func didReceiveError(_ error: Error?)
   func didCompleted()
@@ -38,7 +39,7 @@ internal class KBVideoEngine: NSObject {
   }
   
   @objc private func threadLoop() -> Void {
-    displayLink.add(to: .current, forMode: .commonModes)
+    displayLink.add(to: .current, forMode: .common)
     displayLink.isPaused = true
     if #available(iOS 10.0, *) {
       displayLink.preferredFramesPerSecond = 0
@@ -55,7 +56,7 @@ internal class KBVideoEngine: NSObject {
   }
   
   deinit {
-    displayLink.remove(from: .current, forMode: .commonModes)
+    displayLink.remove(from: .current, forMode: .common)
     displayLink.invalidate()
   }
   

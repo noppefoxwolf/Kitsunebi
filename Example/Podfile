@@ -1,4 +1,5 @@
 use_frameworks!
+swift_version = '4.2'
 
 target 'Kitsunebi_Example' do
   pod 'Kitsunebi', :path => '../'

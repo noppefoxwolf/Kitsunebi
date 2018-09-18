@@ -12,7 +12,7 @@ final class KBAsset {
   let asset: AVURLAsset
   lazy var reader: AVAssetReader = { preconditionFailure() }()
   lazy var output: AVAssetReaderTrackOutput = { preconditionFailure() }()
-  var status: AVAssetReaderStatus { return reader.status }
+  var status: AVAssetReader.Status { return reader.status }
   var isRunning: Bool { return reader.status != .completed && reader.status != .cancelled }
   
   init(url: URL) {
