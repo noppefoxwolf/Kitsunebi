@@ -83,9 +83,14 @@ extension ResourceViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView,
                           cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+    let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
     let resource = resourceStore.resources[indexPath.row]
     cell.textLabel?.text = resource.name
+    if let mSize = resource.mainVideoSize, let aSize = resource.alphaVideoSize {
+      cell.detailTextLabel?.text = "Main w\(mSize.width) x h\(mSize.height) / Alpha: w\(aSize.width) x h\(aSize.height) "
+    } else {
+      cell.detailTextLabel?.text = nil
+    }
     if let selected = selectedResource, selected.name == resource.name {
       cell.accessoryType = .checkmark
     } else {
