@@ -34,7 +34,7 @@ final class PreviewViewController: UIViewController {
   
   private func play() {
     guard let resource = currentResource else { return }
-    playerView.play(mainVideoURL: resource.mainVideoURL,
+    try! playerView.play(mainVideoURL: resource.mainVideoURL,
                     alphaVideoURL: resource.alphaVideoURL,
                     fps: resource.fps)
   }

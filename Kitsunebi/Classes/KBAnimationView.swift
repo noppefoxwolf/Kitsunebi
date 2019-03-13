@@ -58,14 +58,14 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   
   internal var engineInstance: KBVideoEngine? = nil
   
-  public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) {
+  public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) throws {
     engineInstance?.purge()
     engineInstance = KBVideoEngine(mainVideoUrl: mainVideoURL,
                                    alphaVideoUrl: alphaVideoURL,
                                    fps: fps)
     engineInstance?.updateDelegate = self
     engineInstance?.delegate = self
-    try! engineInstance?.play()
+    try engineInstance?.play()
   }
   
   override open class var layerClass: Swift.AnyClass {
