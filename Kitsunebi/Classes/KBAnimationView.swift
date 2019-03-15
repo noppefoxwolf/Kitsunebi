@@ -8,6 +8,7 @@
 import UIKit
 
 public protocol KBAnimationViewDelegate: class {
+  func didUpdateFrame(_ index: Int, animationView: KBAnimationView)
   func animationViewDidFinish(_ animationView: KBAnimationView)
 }
 
@@ -365,6 +366,10 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     } else {
       return UIEdgeInsets.zero
     }
+  }
+  
+  internal func didUpdateFrame(_ index: Int, engine: KBVideoEngine) {
+    delegate?.didUpdateFrame(index, animationView: self)
   }
   
   internal func engineDidFinishPlaying(_ engine: KBVideoEngine) {

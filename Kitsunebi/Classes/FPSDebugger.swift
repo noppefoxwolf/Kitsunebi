@@ -13,7 +13,7 @@ class FPSDebugger {
   private var prev: TimeInterval = 0.0
   
   internal func update(_ link: CADisplayLink) {
-    print("\(Int(1.0 / (link.timestamp - prev)))fps")
+    debugPrint("\(Int(1.0 / (link.timestamp - prev)))fps")
     prev = link.timestamp
   }
 }

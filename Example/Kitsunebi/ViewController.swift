@@ -48,6 +48,10 @@ final class PreviewViewController: UIViewController {
 }
 
 extension PreviewViewController: KBAnimationViewDelegate {
+  func didUpdateFrame(_ index: Int, animationView: KBAnimationView) {
+    print("INDEX : ", index)
+  }
+  
   func animationViewDidFinish(_ animationView: KBAnimationView) {
     play()
   }

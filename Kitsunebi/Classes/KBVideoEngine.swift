@@ -16,6 +16,7 @@ internal protocol KBVideoEngineUpdateDelegate: class {
 }
 
 internal protocol KBVideoEngineDelegate: class {
+  func didUpdateFrame(_ index: Int, engine: KBVideoEngine)
   func engineDidFinishPlaying(_ engine: KBVideoEngine)
 }
 
@@ -28,6 +29,7 @@ internal class KBVideoEngine: NSObject {
   internal weak var updateDelegate: KBVideoEngineUpdateDelegate? = nil
   private var isRunningTheread = true
   private lazy var renderThread: Thread = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.threadLoop), object: nil)
+  private lazy var currentFrameIndex: Int = 0
   
   public init(mainVideoUrl: URL, alphaVideoUrl: URL, fps: Int) {
     mainAsset = KBAsset(url: mainVideoUrl)
@@ -118,6 +120,9 @@ internal class KBVideoEngine: NSObject {
     do {
       let (basePixelBuffer, alphaPixelBuffer) = try copyNextSampleBuffer()
       updateDelegate?.didOutputFrame(basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
+      
+      currentFrameIndex += 1
+      delegate?.didUpdateFrame(currentFrameIndex, engine: self)
     } catch (let error) {
       updateDelegate?.didReceiveError(error)
       finish()
