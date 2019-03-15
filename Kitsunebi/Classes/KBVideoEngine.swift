@@ -11,7 +11,7 @@ import CoreImage
 internal protocol KBVideoEngineUpdateDelegate: class {
   @discardableResult
   func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool
-  func didReceiveError(_ error: Error?)
+  func didReceiveError(_ error: Swift.Error?)
   func didCompleted()
 }
 

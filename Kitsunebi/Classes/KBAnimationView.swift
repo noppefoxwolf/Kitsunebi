@@ -254,7 +254,7 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     return drawImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
   }
   
-  func didReceiveError(_ error: Error?) {
+  func didReceiveError(_ error: Swift.Error?) {
     clear()
   }
   

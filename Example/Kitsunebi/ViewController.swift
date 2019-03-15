@@ -32,9 +32,9 @@ final class PreviewViewController: UIViewController {
     playerView.delegate = self
   }
   
-  private func play() {
+  private func play() throws {
     guard let resource = currentResource else { return }
-    try! playerView.play(mainVideoURL: resource.mainVideoURL,
+    try playerView.play(mainVideoURL: resource.mainVideoURL,
                     alphaVideoURL: resource.alphaVideoURL,
                     fps: resource.fps)
   }
@@ -53,7 +53,7 @@ extension PreviewViewController: KBAnimationViewDelegate {
   }
   
   func animationViewDidFinish(_ animationView: KBAnimationView) {
-    play()
+    try? play()
   }
 }
 
@@ -62,7 +62,7 @@ extension PreviewViewController: ResourceViewControllerDelegate {
                 didSelected resource: Resource) {
     currentResource = resource
     viewController.dismiss(animated: true, completion: { [weak self] in
-      self?.play()
+      try? self?.play()
     })
   }
 }

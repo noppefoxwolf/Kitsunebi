@@ -25,7 +25,7 @@ final class KBAsset {
     if reader.canAdd(output) {
       reader.add(output)
     } else {
-      throw NSError(.cannotAddOutput)
+      throw Error.cannotAddOutput
     }
     output.alwaysCopiesSampleData = false
     reader.startReading()
