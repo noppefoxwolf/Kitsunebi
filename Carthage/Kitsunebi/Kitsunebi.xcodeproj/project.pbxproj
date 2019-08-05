@@ -8,32 +8,32 @@
 
 /* Begin PBXBuildFile section */
 		3727AC8E20A6E56400D6F6EB /* Kitsunebi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3727AC9E20A6E58F00D6F6EB /* KBAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9420A6E58F00D6F6EB /* KBAnimationView.swift */; };
-		3727AC9F20A6E58F00D6F6EB /* WeakProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9520A6E58F00D6F6EB /* WeakProxy.swift */; };
-		3727ACA020A6E58F00D6F6EB /* KBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9620A6E58F00D6F6EB /* KBAsset.swift */; };
-		3727ACA120A6E58F00D6F6EB /* KBVideoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9720A6E58F00D6F6EB /* KBVideoEngine.swift */; };
-		3727ACA220A6E58F00D6F6EB /* KBApplicationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9820A6E58F00D6F6EB /* KBApplicationHandler.swift */; };
-		3727ACA320A6E58F00D6F6EB /* NSError+KBExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9920A6E58F00D6F6EB /* NSError+KBExtension.swift */; };
-		3727ACA420A6E58F00D6F6EB /* EAGL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9A20A6E58F00D6F6EB /* EAGL+Extensions.swift */; };
-		3727ACA520A6E58F00D6F6EB /* FPSKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9B20A6E58F00D6F6EB /* FPSKeeper.swift */; };
-		3727ACA620A6E58F00D6F6EB /* GLESHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9C20A6E58F00D6F6EB /* GLESHelper.swift */; };
-		3727ACA720A6E58F00D6F6EB /* FPSDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3727AC9D20A6E58F00D6F6EB /* FPSDebugger.swift */; };
+		D7DF117722F806AA00796A08 /* KBVideoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF116D22F806A900796A08 /* KBVideoEngine.swift */; };
+		D7DF117822F806AA00796A08 /* KBApplicationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF116E22F806A900796A08 /* KBApplicationHandler.swift */; };
+		D7DF117922F806AA00796A08 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF116F22F806A900796A08 /* Error.swift */; };
+		D7DF117A22F806AA00796A08 /* KBAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117022F806A900796A08 /* KBAnimationView.swift */; };
+		D7DF117B22F806AA00796A08 /* FPSKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117122F806A900796A08 /* FPSKeeper.swift */; };
+		D7DF117C22F806AA00796A08 /* FPSDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117222F806A900796A08 /* FPSDebugger.swift */; };
+		D7DF117D22F806AA00796A08 /* GLESHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117322F806A900796A08 /* GLESHelper.swift */; };
+		D7DF117E22F806AA00796A08 /* EAGL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117422F806A900796A08 /* EAGL+Extensions.swift */; };
+		D7DF117F22F806AA00796A08 /* KBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117522F806AA00796A08 /* KBAsset.swift */; };
+		D7DF118022F806AA00796A08 /* WeakProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7DF117622F806AA00796A08 /* WeakProxy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3727AC8920A6E56400D6F6EB /* Kitsunebi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kitsunebi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kitsunebi.h; sourceTree = "<group>"; };
 		3727AC8D20A6E56400D6F6EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3727AC9420A6E58F00D6F6EB /* KBAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAnimationView.swift; path = ../../../Kitsunebi/Classes/KBAnimationView.swift; sourceTree = "<group>"; };
-		3727AC9520A6E58F00D6F6EB /* WeakProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeakProxy.swift; path = ../../../Kitsunebi/Classes/WeakProxy.swift; sourceTree = "<group>"; };
-		3727AC9620A6E58F00D6F6EB /* KBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAsset.swift; path = ../../../Kitsunebi/Classes/KBAsset.swift; sourceTree = "<group>"; };
-		3727AC9720A6E58F00D6F6EB /* KBVideoEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBVideoEngine.swift; path = ../../../Kitsunebi/Classes/KBVideoEngine.swift; sourceTree = "<group>"; };
-		3727AC9820A6E58F00D6F6EB /* KBApplicationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBApplicationHandler.swift; path = ../../../Kitsunebi/Classes/KBApplicationHandler.swift; sourceTree = "<group>"; };
-		3727AC9920A6E58F00D6F6EB /* NSError+KBExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSError+KBExtension.swift"; path = "../../../Kitsunebi/Classes/NSError+KBExtension.swift"; sourceTree = "<group>"; };
-		3727AC9A20A6E58F00D6F6EB /* EAGL+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EAGL+Extensions.swift"; path = "../../../Kitsunebi/Classes/EAGL+Extensions.swift"; sourceTree = "<group>"; };
-		3727AC9B20A6E58F00D6F6EB /* FPSKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSKeeper.swift; path = ../../../Kitsunebi/Classes/FPSKeeper.swift; sourceTree = "<group>"; };
-		3727AC9C20A6E58F00D6F6EB /* GLESHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GLESHelper.swift; path = ../../../Kitsunebi/Classes/GLESHelper.swift; sourceTree = "<group>"; };
-		3727AC9D20A6E58F00D6F6EB /* FPSDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSDebugger.swift; path = ../../../Kitsunebi/Classes/FPSDebugger.swift; sourceTree = "<group>"; };
+		D7DF116D22F806A900796A08 /* KBVideoEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBVideoEngine.swift; path = ../../../Kitsunebi/Classes/KBVideoEngine.swift; sourceTree = "<group>"; };
+		D7DF116E22F806A900796A08 /* KBApplicationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBApplicationHandler.swift; path = ../../../Kitsunebi/Classes/KBApplicationHandler.swift; sourceTree = "<group>"; };
+		D7DF116F22F806A900796A08 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Error.swift; path = ../../../Kitsunebi/Classes/Error.swift; sourceTree = "<group>"; };
+		D7DF117022F806A900796A08 /* KBAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAnimationView.swift; path = ../../../Kitsunebi/Classes/KBAnimationView.swift; sourceTree = "<group>"; };
+		D7DF117122F806A900796A08 /* FPSKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSKeeper.swift; path = ../../../Kitsunebi/Classes/FPSKeeper.swift; sourceTree = "<group>"; };
+		D7DF117222F806A900796A08 /* FPSDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSDebugger.swift; path = ../../../Kitsunebi/Classes/FPSDebugger.swift; sourceTree = "<group>"; };
+		D7DF117322F806A900796A08 /* GLESHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GLESHelper.swift; path = ../../../Kitsunebi/Classes/GLESHelper.swift; sourceTree = "<group>"; };
+		D7DF117422F806A900796A08 /* EAGL+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "EAGL+Extensions.swift"; path = "../../../Kitsunebi/Classes/EAGL+Extensions.swift"; sourceTree = "<group>"; };
+		D7DF117522F806AA00796A08 /* KBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAsset.swift; path = ../../../Kitsunebi/Classes/KBAsset.swift; sourceTree = "<group>"; };
+		D7DF117622F806AA00796A08 /* WeakProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeakProxy.swift; path = ../../../Kitsunebi/Classes/WeakProxy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,16 +66,16 @@
 		3727AC8B20A6E56400D6F6EB /* Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
-				3727AC9A20A6E58F00D6F6EB /* EAGL+Extensions.swift */,
-				3727AC9D20A6E58F00D6F6EB /* FPSDebugger.swift */,
-				3727AC9B20A6E58F00D6F6EB /* FPSKeeper.swift */,
-				3727AC9C20A6E58F00D6F6EB /* GLESHelper.swift */,
-				3727AC9420A6E58F00D6F6EB /* KBAnimationView.swift */,
-				3727AC9820A6E58F00D6F6EB /* KBApplicationHandler.swift */,
-				3727AC9620A6E58F00D6F6EB /* KBAsset.swift */,
-				3727AC9720A6E58F00D6F6EB /* KBVideoEngine.swift */,
-				3727AC9920A6E58F00D6F6EB /* NSError+KBExtension.swift */,
-				3727AC9520A6E58F00D6F6EB /* WeakProxy.swift */,
+				D7DF117422F806A900796A08 /* EAGL+Extensions.swift */,
+				D7DF116F22F806A900796A08 /* Error.swift */,
+				D7DF117222F806A900796A08 /* FPSDebugger.swift */,
+				D7DF117122F806A900796A08 /* FPSKeeper.swift */,
+				D7DF117322F806A900796A08 /* GLESHelper.swift */,
+				D7DF117022F806A900796A08 /* KBAnimationView.swift */,
+				D7DF116E22F806A900796A08 /* KBApplicationHandler.swift */,
+				D7DF117522F806AA00796A08 /* KBAsset.swift */,
+				D7DF116D22F806A900796A08 /* KBVideoEngine.swift */,
+				D7DF117622F806AA00796A08 /* WeakProxy.swift */,
 				3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */,
 				3727AC8D20A6E56400D6F6EB /* Info.plist */,
 			);
@@ -125,7 +125,7 @@
 				TargetAttributes = {
 					3727AC8820A6E56400D6F6EB = {
 						CreatedOnToolsVersion = 9.3;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1030;
 					};
 				};
 			};
@@ -161,16 +161,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3727ACA320A6E58F00D6F6EB /* NSError+KBExtension.swift in Sources */,
-				3727ACA620A6E58F00D6F6EB /* GLESHelper.swift in Sources */,
-				3727ACA120A6E58F00D6F6EB /* KBVideoEngine.swift in Sources */,
-				3727AC9F20A6E58F00D6F6EB /* WeakProxy.swift in Sources */,
-				3727ACA720A6E58F00D6F6EB /* FPSDebugger.swift in Sources */,
-				3727ACA220A6E58F00D6F6EB /* KBApplicationHandler.swift in Sources */,
-				3727ACA420A6E58F00D6F6EB /* EAGL+Extensions.swift in Sources */,
-				3727ACA020A6E58F00D6F6EB /* KBAsset.swift in Sources */,
-				3727AC9E20A6E58F00D6F6EB /* KBAnimationView.swift in Sources */,
-				3727ACA520A6E58F00D6F6EB /* FPSKeeper.swift in Sources */,
+				D7DF117A22F806AA00796A08 /* KBAnimationView.swift in Sources */,
+				D7DF117F22F806AA00796A08 /* KBAsset.swift in Sources */,
+				D7DF117822F806AA00796A08 /* KBApplicationHandler.swift in Sources */,
+				D7DF117C22F806AA00796A08 /* FPSDebugger.swift in Sources */,
+				D7DF117B22F806AA00796A08 /* FPSKeeper.swift in Sources */,
+				D7DF117E22F806AA00796A08 /* EAGL+Extensions.swift in Sources */,
+				D7DF117922F806AA00796A08 /* Error.swift in Sources */,
+				D7DF117D22F806AA00796A08 /* GLESHelper.swift in Sources */,
+				D7DF118022F806AA00796A08 /* WeakProxy.swift in Sources */,
+				D7DF117722F806AA00796A08 /* KBVideoEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +235,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -291,6 +292,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -320,7 +322,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -347,7 +349,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.noppelab.Kitsunebi;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
