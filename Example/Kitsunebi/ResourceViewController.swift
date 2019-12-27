@@ -90,11 +90,11 @@ extension ResourceViewController: UITableViewDelegate, UITableViewDataSource {
     let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
     let resource = resourceStore.resources[indexPath.row]
     cell.textLabel?.text = resource.name
-    if let mSize = resource.mainVideoSize, let aSize = resource.alphaVideoSize {
-      cell.detailTextLabel?.text = "Main w\(mSize.width) x h\(mSize.height) / Alpha: w\(aSize.width) x h\(aSize.height) "
-    } else {
-      cell.detailTextLabel?.text = nil
-    }
+    let mSize = resource.mainVideoSize
+    let aSize = resource.alphaVideoSize
+    let mainText = mSize != nil ? "Main w\(mSize!.width) x h\(mSize!.height)" : "main.mp4 not found"
+    let alphaText = aSize != nil ? "Alpha: w\(aSize!.width) x h\(aSize!.height)" : "alpha.mp4 not found"
+    cell.detailTextLabel?.text = "\(mainText) / \(alphaText)"
     if let selected = selectedResource, selected.name == resource.name {
       cell.accessoryType = .checkmark
     } else {
