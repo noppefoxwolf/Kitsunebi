@@ -48,21 +48,6 @@ final class KBAsset {
       throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not return image"])
     }
   }
-  
-  @available(*, deprecated: 1.0)
-  func fetchNextCIImage() throws -> CIImage {
-    if let error = reader.error {
-      throw error
-    }
-    if status != .reading {
-      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not reading"])
-    }
-    if let image = output.copyNextCIImage() {
-      return image
-    } else {
-      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not return image"])
-    }
-  }
 }
 
 extension AVAssetReaderTrackOutput {
