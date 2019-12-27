@@ -357,12 +357,14 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     let viewRatio = threadsafeSize.width / threadsafeSize.height
     if viewRatio < imageRatio { // viewの方が細長い //横がはみ出るパターン //iPhoneX
       let imageWidth = threadsafeSize.height * imageRatio
-      let left = ((imageWidth / threadsafeSize.width) - 1.0) / 2.0
-      return UIEdgeInsets(top: 0, left: left, bottom: 0, right: left)
+      // 0.0 ~ 1.0
+      let overWidthRatio = ((imageWidth / threadsafeSize.width) - 1.0)
+      // -1.0 ~ 1.0 本来左にoverWidthRatio/2分ズラすが、範囲が2倍なのでその2倍でoverWidthRatio分ズラしている
+      return UIEdgeInsets(top: 0, left: overWidthRatio, bottom: 0, right: overWidthRatio)
     } else if viewRatio > imageRatio { //iPad
       let viewWidth = extent.height * viewRatio
-      let top = ((viewWidth / extent.width) - 1.0) / 2.0
-      return UIEdgeInsets(top: top, left: 0, bottom: top, right: 0)
+      let overHeightRatio = ((viewWidth / extent.width) - 1.0)
+      return UIEdgeInsets(top: overHeightRatio, left: 0, bottom: overHeightRatio, right: 0)
     } else {
       return UIEdgeInsets.zero
     }
