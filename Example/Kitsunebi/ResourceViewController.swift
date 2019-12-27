@@ -37,7 +37,11 @@ final class ResourceViewController: UIViewController {
     
     noticeLabel.font = .systemFont(ofSize: 12)
     noticeLabel.numberOfLines = 0
-    noticeLabel.backgroundColor = .white
+    if #available(iOS 13.0, *) {
+      noticeLabel.backgroundColor = .systemBackground
+    } else {
+      noticeLabel.backgroundColor = .white
+    }
     noticeLabel.textAlignment = .center
     view.addSubview(noticeLabel)
     
