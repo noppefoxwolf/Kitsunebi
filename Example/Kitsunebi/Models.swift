@@ -35,7 +35,7 @@ extension Resource {
   }
   
   var alphaVideoSize: CGSize? {
-    guard let track = AVAsset(url: mainVideoURL).tracks(withMediaType: .video).first else { return nil }
+    guard let track = AVAsset(url: alphaVideoURL).tracks(withMediaType: .video).first else { return nil }
     let size = track.naturalSize.applying(track.preferredTransform)
     return CGSize(width: abs(size.width), height: abs(size.height))
   }
