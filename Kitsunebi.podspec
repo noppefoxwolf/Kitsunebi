@@ -11,7 +11,7 @@ Overlay alpha channel video animation player view using OpenGLES.
   s.source           = { :git => 'https://github.com/noppefoxwolf/Kitsunebi.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/noppefoxwolf'
   s.ios.deployment_target = '11.0'
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '5.0' }
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '5.2' }
   
   s.source_files = 'Kitsunebi/Classes/**/*'
 end

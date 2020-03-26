@@ -49,14 +49,3 @@ final class KBAsset {
     }
   }
 }
-
-extension AVAssetReaderTrackOutput {
-  internal func copyNextCIImage() -> CIImage? {
-    guard let sampleBuffer = copyNextSampleBuffer() else { return nil }
-    guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
-    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-    let image = CIImage(cvImageBuffer: pixelBuffer)
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-    return image
-  }
-}

@@ -131,8 +131,8 @@ internal class KBVideoEngine: NSObject {
   
   private func copyNextSampleBuffer() throws -> (CVImageBuffer, CVImageBuffer) {
     let main = try mainAsset.copyNextImageBuffer()
-    let alpha = try alphaAsset.copyNextImageBuffer()
-    return (main, alpha)
+    //let alpha = try alphaAsset.copyNextImageBuffer()
+    return (main, main)
   }
 }
 

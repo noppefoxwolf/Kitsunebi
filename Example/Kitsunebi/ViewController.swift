@@ -53,7 +53,11 @@ extension PreviewViewController: KBAnimationViewDelegate {
   }
   
   func animationViewDidFinish(_ animationView: KBAnimationView) {
-    try? play()
+    do {
+      try play()
+    } catch {
+      debugPrint(error)
+    }
   }
 }
 
@@ -62,7 +66,11 @@ extension PreviewViewController: ResourceViewControllerDelegate {
                 didSelected resource: Resource) {
     currentResource = resource
     viewController.dismiss(animated: true, completion: { [weak self] in
-      try? self?.play()
+      do {
+        try self?.play()
+      } catch {
+        debugPrint(error)
+      }
     })
   }
 }

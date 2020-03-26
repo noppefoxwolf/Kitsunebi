@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MetalKit
 
 public protocol KBAnimationViewDelegate: class {
   func didUpdateFrame(_ index: Int, animationView: KBAnimationView)
@@ -13,50 +14,15 @@ public protocol KBAnimationViewDelegate: class {
 }
 
 open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
-  private var backingWidth: GLint = 0
-  private var backingHeight: GLint = 0
-  private var viewRenderbuffer: GLuint = 0
-  private var viewFramebuffer: GLuint = 0
-  private var positionRenderTexture: GLuint = 0
-  private var positionRenderbuffer: GLuint = 0
-  private var positionFramebuffer: GLuint = 0
-  private var displayProgram: GLuint = 0
-  private var uniformLocation: Int32 = 0
+  private let device: MTLDevice
+  private let metalLib: MTLLibrary
+  private let commandQueue: MTLCommandQueue
+  private let textureCache: CVMetalTextureCache
   
-  private let glContext: EAGLContext
-  
-  private var textureCache: CVOpenGLESTextureCache? = nil
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
   
   public weak var delegate: KBAnimationViewDelegate? = nil
-  
-  internal let vsh: String = """
-  attribute vec4 position;
-  attribute vec4 inputTextureCoordinate;
-  varying vec2 textureCoordinate;
-  void main() {
-    gl_Position = position;
-    textureCoordinate = inputTextureCoordinate.xy;
-  }
-  """
-  
-  internal let fsh: String = """
-  varying highp vec2 textureCoordinate;
-  uniform sampler2D videoFrame;
-  uniform sampler2D videoFrame2;
-  void main() {
-    highp vec4 color = texture2D(videoFrame, textureCoordinate);
-    highp vec4 colorAlpha = texture2D(videoFrame2, textureCoordinate);
-    gl_FragColor = vec4(color.r, color.g, color.b, colorAlpha.r);
-  }
-  """
-  
-  internal enum ATTRIB: UInt32 {
-    case VERTEX
-    case TEXTUREPOSITON
-  }
-  
   internal var engineInstance: KBVideoEngine? = nil
   
   public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) throws {
@@ -69,185 +35,53 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     try engineInstance?.play()
   }
   
-  override open class var layerClass: Swift.AnyClass {
-    return CAEAGLLayer.self
-  }
+  override open class var layerClass: Swift.AnyClass { CAMetalLayer.self }
+  private var gpuLayer: CAMetalLayer { self.layer as! CAMetalLayer }
   
-  public init?(frame: CGRect, context: EAGLContext = EAGLContext(api: .openGLES2)!) {
-    glContext = context
-    glContext.isMultiThreaded = true
+  public init?(frame: CGRect, device: MTLDevice) {
+    guard let commandQueue = device.makeCommandQueue() else { return nil }
+    guard let textureCache = try? device.makeTextureCache() else { return nil }
+    guard let metalLib = try? device.makeDefaultLibrary(bundle: Bundle.main) else { return nil }
+    self.device = device
+    self.commandQueue = commandQueue
+    self.textureCache = textureCache
+    self.metalLib = metalLib
     super.init(frame: frame)
     applicationHandler.delegate = self
-    guard prepare() else { return nil }
+    guard prepare(device: device) else { return nil }
   }
   
   required public init?(coder aDecoder: NSCoder) {
-    glContext = EAGLContext(api: .openGLES2)!
-    glContext.isMultiThreaded = true
+    guard let device = MTLCreateSystemDefaultDevice() else { return nil }
+    guard let commandQueue = device.makeCommandQueue() else { return nil }
+    guard let textureCache = try? device.makeTextureCache() else { return nil }
+    guard let metalLib = try? device.makeDefaultLibrary(bundle: Bundle.main) else { return nil }
+    self.device = device
+    self.commandQueue = commandQueue
+    self.textureCache = textureCache
+    self.metalLib = metalLib
     super.init(coder: aDecoder)
-    guard prepare() else { return nil }
+    applicationHandler.delegate = self
+    guard prepare(device: device) else { return nil }
   }
   
   deinit {
     NotificationCenter.default.removeObserver(self)
-    destroyFramebuffer()
   }
   
-  private func prepare() -> Bool {
+  private func prepare(device: MTLDevice) -> Bool {
     backgroundColor = .clear
-    let eaglLayer: CAEAGLLayer = self.layer as! CAEAGLLayer
-    eaglLayer.isOpaque = false
-    eaglLayer.drawableProperties = [kEAGLDrawablePropertyRetainedBacking : false,
-                                    kEAGLDrawablePropertyColorFormat : kEAGLColorFormatRGBA8]
-    guard glContext.use() else { return false }
-    guard createCache() else { return false }
-    guard createFramebuffers() else { return false }
-    load(for: &displayProgram, vsh: vsh, fsh: fsh)
+    gpuLayer.isOpaque = false
+    gpuLayer.pixelFormat = .bgra8Unorm
+    gpuLayer.framebufferOnly = false
+    gpuLayer.presentsWithTransaction = false
+    gpuLayer.drawsAsynchronously = true
     return true
   }
   
   override open func layoutSubviews() {
     super.layoutSubviews()
     threadsafeSize = bounds.size
-  }
-  
-  private func createCache() -> Bool {
-    let err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           nil,
-                                           glContext,
-                                           nil,
-                                           &textureCache)
-    return err != kCVReturnError
-  }
-  
-  @discardableResult
-  private func createFramebuffers() -> Bool {
-    glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
-    glDisable(GLenum(GL_DEPTH_TEST))
-    
-    // Onscreen framebuffer object
-    glGenFramebuffers(1, &viewFramebuffer)
-    glBindFramebuffer(GLenum(GL_FRAMEBUFFER), viewFramebuffer)
-    
-    glGenRenderbuffers(1, &viewRenderbuffer)
-    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
-    
-    glContext.renderbufferStorage(Int(GL_RENDERBUFFER), from: layer as! CAEAGLLayer)
-    
-    glGetRenderbufferParameteriv(GLenum(GL_RENDERBUFFER), GLenum(GL_RENDERBUFFER_WIDTH), &backingWidth)
-    glGetRenderbufferParameteriv(GLenum(GL_RENDERBUFFER), GLenum(GL_RENDERBUFFER_HEIGHT), &backingHeight)
-    
-    glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), viewRenderbuffer)
-    
-    if glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE {
-      print("failure with framebuffer generation")
-      return false
-    }
-    
-    // Offscreen position framebuffer object
-    glGenFramebuffers(1, &positionFramebuffer)
-    guard positionFramebuffer != 0 else { return false }
-    glBindFramebuffer(GLenum(GL_FRAMEBUFFER), positionFramebuffer)
-    
-    glGenRenderbuffers(1, &positionRenderbuffer)
-    guard positionRenderbuffer != 0 else { return false }
-    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), positionRenderbuffer)
-    
-    glRenderbufferStorage(GLenum(GL_RENDERBUFFER), GLenum(GL_RGBA8_OES), GLsizei(self.frame.size.width), GLsizei(self.frame.size.height))
-    glFramebufferRenderbuffer(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), positionRenderbuffer)
-    
-    // Offscreen position framebuffer texture target
-    glGenTextures(1, &positionRenderTexture)
-    guard positionRenderTexture != 0 else { return false }
-    glBindTexture(GLenum(GL_TEXTURE_2D), positionRenderTexture)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GL_NEAREST)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GL_NEAREST)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GL_CLAMP_TO_EDGE)
-    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GL_CLAMP_TO_EDGE)
-    glHint(GLenum(GL_GENERATE_MIPMAP_HINT), GLenum(GL_NICEST))
-    
-    glTexImage2D(GLenum(GL_TEXTURE_2D), 0, GL_RGBA, GLsizei(bounds.size.width), GLsizei(bounds.size.height), 0, GLenum(GL_RGBA), GLenum(GL_UNSIGNED_BYTE), nil)
-    
-    glFramebufferTexture2D(GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_TEXTURE_2D), positionRenderTexture, 0)
-    
-    return true
-  }
-  
-  private func destroyFramebuffer() {
-    glContext.use()
-    if viewFramebuffer != 0 {
-      glDeleteFramebuffers(1, &viewFramebuffer)
-      viewFramebuffer = 0
-    }
-    if viewRenderbuffer != 0 {
-      glDeleteRenderbuffers(1, &viewRenderbuffer)
-      viewRenderbuffer = 0
-    }
-  }
-  
-  @discardableResult
-  private func load(for programPointer: UnsafeMutablePointer<GLuint>, vsh: String, fsh: String) -> Bool {
-    var vertexShader: GLuint = 0
-    var fragShader: GLuint = 0
-    
-    // Create shader program.
-    programPointer.pointee = glCreateProgram()
-    
-    // Create and compile vertex shader.
-    if !GLESHelper.compileShader(&vertexShader, type:GLenum(GL_VERTEX_SHADER), shaderString:vsh) {
-      print("failed to compile vertex shader")
-      return false
-    }
-    
-    // Create and compile fragment shader.
-    if !GLESHelper.compileShader(&fragShader, type:GLenum(GL_FRAGMENT_SHADER), shaderString:fsh) {
-      print("failed to compile fragment shader")
-      return false
-    }
-    
-    // Attach vertex shader to program.
-    glAttachShader(programPointer.pointee, vertexShader)
-    
-    // Attach fragment shader to program.
-    glAttachShader(programPointer.pointee, fragShader)
-    
-    // Bind attribute locations.
-    // This needs to be done prior to linking.
-    glBindAttribLocation(programPointer.pointee, ATTRIB.VERTEX.rawValue, "position")
-    glBindAttribLocation(programPointer.pointee, ATTRIB.TEXTUREPOSITON.rawValue, "inputTextureCoordinate")
-    
-    // Link program.
-    if !GLESHelper.linkProgram(programPointer.pointee) {
-      print("failed to link program: \(programPointer.pointee)")
-      
-      if vertexShader != 0 {
-        glDeleteShader(vertexShader)
-        vertexShader = 0
-      }
-      if fragShader != 0 {
-        glDeleteShader(fragShader)
-        fragShader = 0
-      }
-      if programPointer.pointee != 0 {
-        glDeleteProgram(programPointer.pointee)
-        programPointer.pointee = 0
-      }
-      
-      return false
-    }
-    
-    // Get uniform locations.
-    uniformLocation = glGetUniformLocation(programPointer.pointee, "videoFrame2")
-    
-    // Release vertex and fragment shaders.
-    if vertexShader != 0 {
-      glDeleteShader(vertexShader)
-    }
-    if fragShader != 0 {
-      glDeleteShader(fragShader)
-    }
-    
-    return true
   }
   
   func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
@@ -263,93 +97,56 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   }
   
   private func clear() {
-    glClearColor(0, 0, 0, 0)
-    glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
-    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
-    glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
+//    glClearColor(0, 0, 0, 0)
+//    glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+//    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
+//    glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
   }
+  lazy var vertexBuffer: MTLBuffer = { device.makeVertexBuffer() }()
+  lazy var texCoordBuffer: MTLBuffer = { device.makeTexureCoordBuffer() }()
+  lazy var pipelineState: MTLRenderPipelineState = { device.makeRenderPipelineState(metalLib: metalLib) }()
   
   @discardableResult
   private func drawImage(with basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
     guard applicationHandler.isActive else { return false }
+    guard let nextDrawable = gpuLayer.nextDrawable() else { return false }
+    
+    /*
     let width = CVPixelBufferGetWidth(basePixelBuffer)
     let height = CVPixelBufferGetHeight(basePixelBuffer)
     let extent = CGRect(x: 0, y: 0, width: width, height: height)
+    let edge = fillEdge(from: extent)
+    */
     
-    // main //
-    var baseTexture: CVOpenGLESTexture? = nil
-    var baseTextureName: GLuint = GLuint()
-    guard GLESHelper.setupOriginTexture(with: basePixelBuffer,
-                                        texture: &baseTexture,
-                                        textureCahce: textureCache!,
-                                        textureOriginInput: &baseTextureName,
-                                        width: GLsizei(width),
-                                        height: GLsizei(height)) else { return false }
-    
-    // alpha //
-    var alphaTexture: CVOpenGLESTexture? = nil
-    var alphaTextureName: GLuint = GLuint()
-    guard GLESHelper.setupOriginTexture(with: alphaPixelBuffer,
-                                        texture: &alphaTexture,
-                                        textureCahce: textureCache!,
-                                        textureOriginInput: &alphaTextureName,
-                                        width: GLsizei(width),
-                                        height: GLsizei(height)) else { return false }
-    
-    // render //
-    drawFrame(with: baseTextureName, alphaTexture: alphaTextureName, edge: fillEdge(from: extent))
-
-    CVOpenGLESTextureCacheFlush(textureCache!, 0)
-    return true
-  }
-  
-  @discardableResult
-  private func drawFrame(with texture: GLuint, alphaTexture: GLuint, edge: UIEdgeInsets) -> Bool {
-    guard glContext.use() else { return false }
-    
-    let squareVertices: [GLfloat] = [
-      -1.0 - GLfloat(edge.left), -1.0 - GLfloat(edge.bottom),
-      1.0 + GLfloat(edge.right), -1.0 - GLfloat(edge.bottom),
-      -1.0 - GLfloat(edge.left),  1.0 + GLfloat(edge.top),
-      1.0 + GLfloat(edge.right),  1.0 + GLfloat(edge.top),
-    ]
-    
-    let textureVertices: [GLfloat] = [
-      0.0, 1.0,
-      1.0, 1.0,
-      0.0,  0.0,
-      1.0,  0.0,
-    ]
-    
-    // Use shader program.
-    if viewFramebuffer == 0 {
-      createFramebuffers()
+    do {
+      let baseTexture = try textureCache.makeTextureFromImage(basePixelBuffer).texture
+      let alphaTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer).texture
+      
+      let commandBuffer = commandQueue.makeCommandBuffer()!
+//      let vertexBuffer = device.makeVertexBuffer()
+//      let texCoordBuffer = device.makeTexureCoordBuffer()
+//      let pipelineState = device.makeRenderPipelineState(metalLib: metalLib)
+      
+      let renderDesc = MTLRenderPassDescriptor()
+      renderDesc.colorAttachments[0].texture = nextDrawable.texture
+      renderDesc.colorAttachments[0].loadAction = .clear
+      
+      let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderDesc)!
+      renderEncoder.setRenderPipelineState(pipelineState)
+      renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+      renderEncoder.setVertexBuffer(texCoordBuffer, offset: 0, index: 1)
+      renderEncoder.setFragmentTexture(baseTexture, index: 0)
+      renderEncoder.setFragmentTexture(alphaTexture, index: 1)
+      renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+      renderEncoder.endEncoding()
+      
+      commandBuffer.present(nextDrawable)
+      commandBuffer.commit()
+    } catch {
+      
     }
-    
-    glBindFramebuffer(GLenum(GL_FRAMEBUFFER), viewFramebuffer)
-    
-    glViewport(0, 0, backingWidth, backingHeight)
-    glUseProgram(displayProgram)
-    
-    glActiveTexture(GLenum(GL_TEXTURE0))
-    glBindTexture(GLenum(GL_TEXTURE_2D), texture)
-    
-    glActiveTexture(GLenum(GL_TEXTURE1))
-    glBindTexture(GLenum(GL_TEXTURE_2D), alphaTexture);
-    
-    // Update uniform values
-    glUniform1i(uniformLocation, 1)
-    
-    // Update attribute values.
-    glVertexAttribPointer(ATTRIB.VERTEX.rawValue, 2, GLenum(GL_FLOAT), 0, 0, squareVertices)
-    glEnableVertexAttribArray(ATTRIB.VERTEX.rawValue)
-    glVertexAttribPointer(ATTRIB.TEXTUREPOSITON.rawValue, 2, GLenum(GL_FLOAT), 0, 0, textureVertices)
-    glEnableVertexAttribArray(ATTRIB.TEXTUREPOSITON.rawValue)
-    
-    glDrawArrays(GLenum(GL_TRIANGLE_STRIP), 0, 4)
-    
-    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
-    return glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
+    textureCache.flush()
+    return true
   }
 
   private func fillEdge(from extent: CGRect) -> UIEdgeInsets {
@@ -385,5 +182,93 @@ extension KBAnimationView: KBApplicationHandlerDelegate {
   }
   func willResignActive(_ notification: Notification) {
     engineInstance?.pause()
+  }
+}
+
+extension CVMetalTextureCache {
+  func flush(options: CVOptionFlags = 0) {
+    CVMetalTextureCacheFlush(self, options)
+  }
+  
+  func makeTextureFromImage(_ buffer: CVImageBuffer) throws -> CVMetalTexture {
+    let size = CVImageBufferGetEncodedSize(buffer)
+    
+    var imageTexture: CVMetalTexture?
+    let result = CVMetalTextureCacheCreateTextureFromImage(
+      kCFAllocatorDefault,
+      self,
+      buffer,
+      nil,
+      .bgra8Unorm,
+      Int(size.width),
+      Int(size.height),
+      0,
+      &imageTexture
+    )
+    if let imageTexture = imageTexture {
+      return imageTexture
+    } else {
+      throw CVMetalError.cvReturn(result)
+    }
+  }
+}
+
+enum CVMetalError: Swift.Error {
+  case cvReturn(CVReturn)
+}
+
+extension CVMetalTexture {
+  var texture: MTLTexture? { CVMetalTextureGetTexture(self) }
+}
+
+extension MTLDevice {
+  internal func makeTextureCache() throws -> CVMetalTextureCache {
+    var textureCache: CVMetalTextureCache?
+    let result = CVMetalTextureCacheCreate(
+      kCFAllocatorDefault,
+      nil,
+      self,
+      nil,
+      &textureCache
+    )
+    if let textureCache = textureCache {
+      return textureCache
+    } else {
+      throw CVMetalError.cvReturn(result)
+    }
+  }
+  
+  internal func makeTexureCoordBuffer() -> MTLBuffer {
+    let texCoordinateData: [Float] = [
+      0, 1,
+      1, 1,
+      0, 0,
+      1, 0
+    ]
+    let texCoordinateDataSize = MemoryLayout<Float>.size * texCoordinateData.count
+    return makeBuffer(bytes: texCoordinateData, length: texCoordinateDataSize)!
+  }
+  
+  internal func makeVertexBuffer(edge: UIEdgeInsets = .zero) -> MTLBuffer {
+    let vertexData: [Float] = [
+      -1.0 - Float(edge.left), -1.0 - Float(edge.bottom), 0, 1,
+      1.0 + Float(edge.right), -1.0 - Float(edge.bottom), 0, 1,
+      -1.0 - Float(edge.left),  1.0 + Float(edge.top), 0, 1,
+      1.0 + Float(edge.right),  1.0 + Float(edge.top), 0, 1,
+    ]
+    let size = vertexData.count * MemoryLayout<Float>.size
+    return makeBuffer(bytes: vertexData, length: size)!
+  }
+  
+  internal func makeRenderPipelineState(metalLib: MTLLibrary,
+                                        pixelFormat: MTLPixelFormat = .bgra8Unorm,
+                                        vertexFunctionName: String = "vertexShader",
+                                        fragmentFunctionName: String = "fragmentShader") -> MTLRenderPipelineState {
+    let pipelineDesc = MTLRenderPipelineDescriptor()
+    pipelineDesc.vertexFunction = metalLib.makeFunction(name: vertexFunctionName)
+    pipelineDesc.fragmentFunction = metalLib.makeFunction(name: fragmentFunctionName)
+    pipelineDesc.colorAttachments[0].pixelFormat = pixelFormat
+    
+    return try! makeRenderPipelineState(descriptor: pipelineDesc)
   }
 }
