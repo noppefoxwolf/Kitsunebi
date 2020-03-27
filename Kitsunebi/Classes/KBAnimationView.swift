@@ -18,6 +18,9 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   private let metalLib: MTLLibrary
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
+  lazy var vertexBuffer: MTLBuffer = { device.makeVertexBuffer() }()
+  lazy var texCoordBuffer: MTLBuffer = { device.makeTexureCoordBuffer() }()
+  lazy var pipelineState: MTLRenderPipelineState = { device.makeRenderPipelineState(metalLib: metalLib) }()
   
   private var threadsafeSize: CGSize = .zero
   private var applicationHandler = KBApplicationHandler()
@@ -85,7 +88,7 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   }
   
   func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
-    return drawImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
+    drawImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer)
   }
   
   func didReceiveError(_ error: Swift.Error?) {
@@ -102,9 +105,6 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
 //    glBindRenderbuffer(GLenum(GL_RENDERBUFFER), viewRenderbuffer)
 //    glContext.presentRenderbuffer(Int(GL_RENDERBUFFER))
   }
-  lazy var vertexBuffer: MTLBuffer = { device.makeVertexBuffer() }()
-  lazy var texCoordBuffer: MTLBuffer = { device.makeTexureCoordBuffer() }()
-  lazy var pipelineState: MTLRenderPipelineState = { device.makeRenderPipelineState(metalLib: metalLib) }()
   
   @discardableResult
   private func drawImage(with basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool {
@@ -123,9 +123,6 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
       let alphaTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer).texture
       
       let commandBuffer = commandQueue.makeCommandBuffer()!
-//      let vertexBuffer = device.makeVertexBuffer()
-//      let texCoordBuffer = device.makeTexureCoordBuffer()
-//      let pipelineState = device.makeRenderPipelineState(metalLib: metalLib)
       
       let renderDesc = MTLRenderPassDescriptor()
       renderDesc.colorAttachments[0].texture = nextDrawable.texture
@@ -158,7 +155,7 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
       let overWidthRatio = ((imageWidth / threadsafeSize.width) - 1.0)
       // -1.0 ~ 1.0 本来左にoverWidthRatio/2分ズラすが、範囲が2倍なのでその2倍でoverWidthRatio分ズラしている
       return UIEdgeInsets(top: 0, left: overWidthRatio, bottom: 0, right: overWidthRatio)
-    } else if viewRatio > imageRatio { //iPad
+    } else if viewRatio > imageRatio { //iPadとか
       let viewWidth = extent.height * viewRatio
       let overHeightRatio = ((viewWidth / extent.width) - 1.0)
       return UIEdgeInsets(top: overHeightRatio, left: 0, bottom: overHeightRatio, right: 0)
