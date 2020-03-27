@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import QuartzCore.CAMetalLayer
 import MetalKit
 
 public protocol KBAnimationViewDelegate: class {
