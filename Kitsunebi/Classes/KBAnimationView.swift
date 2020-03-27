@@ -10,11 +10,18 @@ import QuartzCore.CAMetalLayer
 import MetalKit
 
 public protocol KBAnimationViewDelegate: class {
-  func didUpdateFrame(_ index: Int, animationView: KBAnimationView)
-  func animationViewDidFinish(_ animationView: KBAnimationView)
+  func animationViewDidUpdateFrame(_ index: Int)
+  func animationViewDidFinish()
 }
 
-open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
+public protocol CAMetalLayerInterface: class {
+  var pixelFormat: MTLPixelFormat { get set }
+  var framebufferOnly: Bool { get set }
+  var presentsWithTransaction: Bool { get set }
+  func nextDrawable() -> CAMetalDrawable?
+}
+
+open class KBAnimationView<Layer: CAMetalLayerInterface & CALayer>: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDelegate {
   private let device: MTLDevice
   private let metalLib: MTLLibrary
   private let commandQueue: MTLCommandQueue
@@ -39,8 +46,8 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
     try engineInstance?.play()
   }
   
-  override open class var layerClass: Swift.AnyClass { CAMetalLayer.self }
-  private var gpuLayer: CAMetalLayer { self.layer as! CAMetalLayer }
+  override open class var layerClass: Swift.AnyClass { Layer.self }
+  private var gpuLayer: Layer { self.layer as! Layer }
   
   public init?(frame: CGRect, device: MTLDevice) {
     guard let commandQueue = device.makeCommandQueue() else { return nil }
@@ -166,11 +173,11 @@ open class KBAnimationView: UIView, KBVideoEngineUpdateDelegate, KBVideoEngineDe
   }
   
   internal func didUpdateFrame(_ index: Int, engine: KBVideoEngine) {
-    delegate?.didUpdateFrame(index, animationView: self)
+    delegate?.animationViewDidUpdateFrame(index)
   }
   
   internal func engineDidFinishPlaying(_ engine: KBVideoEngine) {
-    delegate?.animationViewDidFinish(self)
+    delegate?.animationViewDidFinish()
   }
 }
 
