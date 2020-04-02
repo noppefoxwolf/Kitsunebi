@@ -50,7 +50,8 @@ open class AnimationView: UIView {
     try engineInstance?.play()
   }
   
-  public init?(frame: CGRect, device: MTLDevice) {
+  public init?(frame: CGRect, device: MTLDevice? = MTLCreateSystemDefaultDevice()) {
+    guard let device = device else { return nil }
     guard let commandQueue = device.makeCommandQueue() else { return nil }
     guard let textureCache = try? device.makeTextureCache() else { return nil }
     guard let metalLib = try? device.makeDefaultLibrary(bundle: Bundle.main) else { return nil }
