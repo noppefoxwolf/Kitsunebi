@@ -1,6 +1,6 @@
 ![](https://github.com/noppefoxwolf/Kitsunebi/blob/master/meta/repo-banner.png)
 
-Overlay alpha channel video animation player view using OpenGLES.
+Overlay alpha channel video animation player view using Metal.
 
 ![](https://github.com/noppefoxwolf/Kitsunebi/blob/master/meta/animation.gif)
 
