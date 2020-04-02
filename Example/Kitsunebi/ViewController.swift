@@ -46,11 +46,11 @@ final class PreviewViewController: UIViewController {
 }
 
 extension PreviewViewController: PlayerViewDelegate {
-  func didUpdateFrame(_ index: Int, playerView: PlayerView) {
+  func playerView(_ playerView: PlayerView, didUpdateFrame index: Int) {
     print("INDEX : ", index)
   }
   
-  func animationViewDidFinish(_ playerView: PlayerView) {
+  func didFinished(_ playerView: PlayerView) {
     do {
       try play()
     } catch {

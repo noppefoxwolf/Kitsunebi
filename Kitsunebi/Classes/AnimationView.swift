@@ -9,8 +9,8 @@ import UIKit
 import MetalKit
 
 public protocol PlayerViewDelegate: class {
-  func didUpdateFrame(_ index: Int, playerView: PlayerView)
-  func animationViewDidFinish(_ playerView: PlayerView)
+  func playerView(_ playerView: PlayerView, didUpdateFrame index: Int)
+  func didFinished(_ playerView: PlayerView)
 }
 
 open class PlayerView: UIView {
@@ -167,11 +167,11 @@ extension PlayerView: VideoEngineUpdateDelegate {
 
 extension PlayerView: VideoEngineDelegate {
   internal func didUpdateFrame(_ index: Int, engine: VideoEngine) {
-    delegate?.didUpdateFrame(index, playerView: self)
+    delegate?.playerView(self, didUpdateFrame: index)
   }
   
   internal func engineDidFinishPlaying(_ engine: VideoEngine) {
-    delegate?.animationViewDidFinish(self)
+    delegate?.didFinished(self)
   }
 }
 
