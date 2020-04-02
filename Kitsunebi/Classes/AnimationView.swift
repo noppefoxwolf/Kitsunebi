@@ -8,8 +8,6 @@
 import UIKit
 import MetalKit
 
-private final class BundleToken {}
-
 public protocol AnimationViewDelegate: class {
   func didUpdateFrame(_ index: Int, animationView: AnimationView)
   func animationViewDidFinish(_ animationView: AnimationView)
@@ -30,7 +28,6 @@ open class AnimationView: UIView {
   }
   private var gpuLayer: LayerClass { self.layer as! LayerClass }
   private let renderQueue: DispatchQueue = .global()
-  private let metalLib: MTLLibrary
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
   private let vertexBuffer: MTLBuffer
@@ -51,16 +48,16 @@ open class AnimationView: UIView {
   }
   
   public init?(frame: CGRect, device: MTLDevice? = MTLCreateSystemDefaultDevice()) {
-    guard let device = device else { return nil }
+    guard let device = MTLCreateSystemDefaultDevice() else { return nil }
     guard let commandQueue = device.makeCommandQueue() else { return nil }
     guard let textureCache = try? device.makeTextureCache() else { return nil }
-    guard let metalLib = try? device.makeDefaultLibrary(bundle: Bundle.main) else { return nil }
+    guard let metalLib = try? device.makeLibrary(URL: Bundle.current.defaultMetalLibraryURL) else { return nil }
+    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.metalLib = metalLib
     self.vertexBuffer = device.makeVertexBuffer()
     self.texCoordBuffer = device.makeTexureCoordBuffer()
-    self.pipelineState = device.makeRenderPipelineState(metalLib: metalLib)
+    self.pipelineState = pipelineState
     super.init(frame: frame)
     applicationHandler.delegate = self
     backgroundColor = .clear
@@ -76,13 +73,13 @@ open class AnimationView: UIView {
     guard let device = MTLCreateSystemDefaultDevice() else { return nil }
     guard let commandQueue = device.makeCommandQueue() else { return nil }
     guard let textureCache = try? device.makeTextureCache() else { return nil }
-    guard let metalLib = try? device.makeDefaultLibrary(bundle: Bundle.main) else { return nil }
+    guard let metalLib = try? device.makeLibrary(URL: Bundle.current.defaultMetalLibraryURL) else { return nil }
+    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.metalLib = metalLib
     self.vertexBuffer = device.makeVertexBuffer()
     self.texCoordBuffer = device.makeTexureCoordBuffer()
-    self.pipelineState = device.makeRenderPipelineState(metalLib: metalLib)
+    self.pipelineState = pipelineState
     super.init(coder: aDecoder)
     applicationHandler.delegate = self
     backgroundColor = .clear

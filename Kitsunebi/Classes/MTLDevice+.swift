@@ -51,12 +51,12 @@ extension MTLDevice {
   internal func makeRenderPipelineState(metalLib: MTLLibrary,
                                         pixelFormat: MTLPixelFormat = .bgra8Unorm,
                                         vertexFunctionName: String = "vertexShader",
-                                        fragmentFunctionName: String = "fragmentShader") -> MTLRenderPipelineState {
+                                        fragmentFunctionName: String = "fragmentShader") throws -> MTLRenderPipelineState {
     let pipelineDesc = MTLRenderPipelineDescriptor()
     pipelineDesc.vertexFunction = metalLib.makeFunction(name: vertexFunctionName)
     pipelineDesc.fragmentFunction = metalLib.makeFunction(name: fragmentFunctionName)
     pipelineDesc.colorAttachments[0].pixelFormat = pixelFormat
     
-    return try! makeRenderPipelineState(descriptor: pipelineDesc)
+    return try makeRenderPipelineState(descriptor: pipelineDesc)
   }
 }
