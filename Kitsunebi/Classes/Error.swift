@@ -21,3 +21,7 @@ internal enum RenderError: Swift.Error {
   case applicationBackground
   case failedToFetchNextDrawable
 }
+
+enum CVMetalError: Swift.Error {
+  case cvReturn(CVReturn)
+}

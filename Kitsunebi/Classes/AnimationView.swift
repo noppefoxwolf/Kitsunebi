@@ -1,5 +1,5 @@
 //
-//  AnimationView.swift
+//  PlayerView.swift
 //  Kitsunebi
 //
 //  Created by Tomoya Hirano on 2018/04/13.
@@ -8,12 +8,12 @@
 import UIKit
 import MetalKit
 
-public protocol AnimationViewDelegate: class {
-  func didUpdateFrame(_ index: Int, animationView: AnimationView)
-  func animationViewDidFinish(_ animationView: AnimationView)
+public protocol PlayerViewDelegate: class {
+  func didUpdateFrame(_ index: Int, playerView: PlayerView)
+  func animationViewDidFinish(_ playerView: PlayerView)
 }
 
-open class AnimationView: UIView {
+open class PlayerView: UIView {
   typealias LayerClass = CAMetalLayerInterface & CALayer
   override open class var layerClass: Swift.AnyClass {
     #if targetEnvironment(simulator)
@@ -35,13 +35,12 @@ open class AnimationView: UIView {
   private let pipelineState: MTLRenderPipelineState
   private var applicationHandler = ApplicationHandler()
   
-  public weak var delegate: AnimationViewDelegate? = nil
+  public weak var delegate: PlayerViewDelegate? = nil
   internal var engineInstance: VideoEngine? = nil
-  private let semaphore = DispatchSemaphore(value: 1)
   
-  public func play(mainVideoURL: URL, alphaVideoURL: URL, fps: Int) throws {
+  public func play(base baseVideoURL: URL, alpha alphaVideoURL: URL, fps: Int) throws {
     engineInstance?.purge()
-    engineInstance = VideoEngine(mainVideoUrl: mainVideoURL, alphaVideoUrl: alphaVideoURL, fps: fps)
+    engineInstance = VideoEngine(base: baseVideoURL, alpha: alphaVideoURL, fps: fps)
     engineInstance?.updateDelegate = self
     engineInstance?.delegate = self
     try engineInstance?.play()
@@ -134,7 +133,7 @@ open class AnimationView: UIView {
   }
 }
 
-extension AnimationView: VideoEngineUpdateDelegate {
+extension PlayerView: VideoEngineUpdateDelegate {
   internal func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) {
     guard applicationHandler.isActive else { return }
     DispatchQueue.main.async { [weak self] in
@@ -166,9 +165,9 @@ extension AnimationView: VideoEngineUpdateDelegate {
   }
 }
 
-extension AnimationView: VideoEngineDelegate {
+extension PlayerView: VideoEngineDelegate {
   internal func didUpdateFrame(_ index: Int, engine: VideoEngine) {
-    delegate?.didUpdateFrame(index, animationView: self)
+    delegate?.didUpdateFrame(index, playerView: self)
   }
   
   internal func engineDidFinishPlaying(_ engine: VideoEngine) {
@@ -176,7 +175,7 @@ extension AnimationView: VideoEngineDelegate {
   }
 }
 
-extension AnimationView: ApplicationHandlerDelegate {
+extension PlayerView: ApplicationHandlerDelegate {
   func didBecomeActive(_ notification: Notification) {
     engineInstance?.resume()
   }
@@ -186,6 +185,3 @@ extension AnimationView: ApplicationHandlerDelegate {
   }
 }
 
-enum CVMetalError: Swift.Error {
-  case cvReturn(CVReturn)
-}

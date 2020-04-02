@@ -17,7 +17,7 @@ final class PreviewViewController: UIViewController {
   private lazy var cameraSession: AVCaptureSession = .init()
   private lazy var cameraLayer: AVCaptureVideoPreviewLayer = .init(session: cameraSession)
   @IBOutlet private weak var backgroundContentView: UIImageView!
-  @IBOutlet private weak var playerView: AnimationView!
+  @IBOutlet private weak var playerView: Kitsunebi.PlayerView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -34,9 +34,7 @@ final class PreviewViewController: UIViewController {
   
   private func play() throws {
     guard let resource = currentResource else { return }
-    try playerView.play(mainVideoURL: resource.mainVideoURL,
-                    alphaVideoURL: resource.alphaVideoURL,
-                    fps: resource.fps)
+    try playerView.play(base: resource.baseVideoURL, alpha: resource.alphaVideoURL, fps: resource.fps)
   }
   
   @IBAction func tappedResourceButton(_ sender: Any) {
@@ -47,12 +45,12 @@ final class PreviewViewController: UIViewController {
   }
 }
 
-extension PreviewViewController: AnimationViewDelegate {
-  func didUpdateFrame(_ index: Int, animationView: AnimationView) {
+extension PreviewViewController: PlayerViewDelegate {
+  func didUpdateFrame(_ index: Int, playerView: PlayerView) {
     print("INDEX : ", index)
   }
   
-  func animationViewDidFinish(_ animationView: AnimationView) {
+  func animationViewDidFinish(_ playerView: PlayerView) {
     do {
       try play()
     } catch {
