@@ -8,28 +8,42 @@
 
 /* Begin PBXBuildFile section */
 		3727AC8E20A6E56400D6F6EB /* Kitsunebi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D79D9462242DA9F900297CB2 /* KBAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D9459242DA9F900297CB2 /* KBAsset.swift */; };
-		D79D9463242DA9F900297CB2 /* KBApplicationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945A242DA9F900297CB2 /* KBApplicationHandler.swift */; };
-		D79D9464242DA9F900297CB2 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945B242DA9F900297CB2 /* Error.swift */; };
-		D79D9465242DA9F900297CB2 /* FPSDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945C242DA9F900297CB2 /* FPSDebugger.swift */; };
-		D79D9466242DA9F900297CB2 /* KBAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945D242DA9F900297CB2 /* KBAnimationView.swift */; };
-		D79D9467242DA9F900297CB2 /* KBVideoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945E242DA9F900297CB2 /* KBVideoEngine.swift */; };
-		D79D9468242DA9F900297CB2 /* WeakProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D945F242DA9F900297CB2 /* WeakProxy.swift */; };
-		D79D9469242DA9F900297CB2 /* FPSKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79D9460242DA9F900297CB2 /* FPSKeeper.swift */; };
+		D7CC45B12435CBA700B5E148 /* ApplicationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A22435CBA700B5E148 /* ApplicationHandler.swift */; };
+		D7CC45B22435CBA700B5E148 /* FPSDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A32435CBA700B5E148 /* FPSDebugger.swift */; };
+		D7CC45B32435CBA700B5E148 /* default.metal in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A42435CBA700B5E148 /* default.metal */; };
+		D7CC45B42435CBA700B5E148 /* CVMetalTextureCache+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A52435CBA700B5E148 /* CVMetalTextureCache+.swift */; };
+		D7CC45B52435CBA700B5E148 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A62435CBA700B5E148 /* Error.swift */; };
+		D7CC45B62435CBA700B5E148 /* CVMetalTexture+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A72435CBA700B5E148 /* CVMetalTexture+.swift */; };
+		D7CC45B72435CBA700B5E148 /* VideoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A82435CBA700B5E148 /* VideoEngine.swift */; };
+		D7CC45B82435CBA700B5E148 /* MTLDevice+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45A92435CBA700B5E148 /* MTLDevice+.swift */; };
+		D7CC45B92435CBA700B5E148 /* CVPixelBuffer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AA2435CBA700B5E148 /* CVPixelBuffer+.swift */; };
+		D7CC45BA2435CBA700B5E148 /* Bundle+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AB2435CBA700B5E148 /* Bundle+.swift */; };
+		D7CC45BB2435CBA700B5E148 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AC2435CBA700B5E148 /* Asset.swift */; };
+		D7CC45BC2435CBA700B5E148 /* AnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AD2435CBA700B5E148 /* AnimationView.swift */; };
+		D7CC45BD2435CBA700B5E148 /* WeakProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AE2435CBA700B5E148 /* WeakProxy.swift */; };
+		D7CC45BE2435CBA700B5E148 /* FPSKeeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45AF2435CBA700B5E148 /* FPSKeeper.swift */; };
+		D7CC45BF2435CBA700B5E148 /* CAMetalLayerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7CC45B02435CBA700B5E148 /* CAMetalLayerInterface.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3727AC8920A6E56400D6F6EB /* Kitsunebi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kitsunebi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kitsunebi.h; sourceTree = "<group>"; };
 		3727AC8D20A6E56400D6F6EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D79D9459242DA9F900297CB2 /* KBAsset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAsset.swift; path = ../../../Kitsunebi/Classes/KBAsset.swift; sourceTree = "<group>"; };
-		D79D945A242DA9F900297CB2 /* KBApplicationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBApplicationHandler.swift; path = ../../../Kitsunebi/Classes/KBApplicationHandler.swift; sourceTree = "<group>"; };
-		D79D945B242DA9F900297CB2 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Error.swift; path = ../../../Kitsunebi/Classes/Error.swift; sourceTree = "<group>"; };
-		D79D945C242DA9F900297CB2 /* FPSDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSDebugger.swift; path = ../../../Kitsunebi/Classes/FPSDebugger.swift; sourceTree = "<group>"; };
-		D79D945D242DA9F900297CB2 /* KBAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBAnimationView.swift; path = ../../../Kitsunebi/Classes/KBAnimationView.swift; sourceTree = "<group>"; };
-		D79D945E242DA9F900297CB2 /* KBVideoEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KBVideoEngine.swift; path = ../../../Kitsunebi/Classes/KBVideoEngine.swift; sourceTree = "<group>"; };
-		D79D945F242DA9F900297CB2 /* WeakProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeakProxy.swift; path = ../../../Kitsunebi/Classes/WeakProxy.swift; sourceTree = "<group>"; };
-		D79D9460242DA9F900297CB2 /* FPSKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSKeeper.swift; path = ../../../Kitsunebi/Classes/FPSKeeper.swift; sourceTree = "<group>"; };
+		D7CC45A22435CBA700B5E148 /* ApplicationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApplicationHandler.swift; path = ../../../Kitsunebi/Classes/ApplicationHandler.swift; sourceTree = "<group>"; };
+		D7CC45A32435CBA700B5E148 /* FPSDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSDebugger.swift; path = ../../../Kitsunebi/Classes/FPSDebugger.swift; sourceTree = "<group>"; };
+		D7CC45A42435CBA700B5E148 /* default.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = default.metal; path = ../../../Kitsunebi/Classes/default.metal; sourceTree = "<group>"; };
+		D7CC45A52435CBA700B5E148 /* CVMetalTextureCache+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CVMetalTextureCache+.swift"; path = "../../../Kitsunebi/Classes/CVMetalTextureCache+.swift"; sourceTree = "<group>"; };
+		D7CC45A62435CBA700B5E148 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Error.swift; path = ../../../Kitsunebi/Classes/Error.swift; sourceTree = "<group>"; };
+		D7CC45A72435CBA700B5E148 /* CVMetalTexture+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CVMetalTexture+.swift"; path = "../../../Kitsunebi/Classes/CVMetalTexture+.swift"; sourceTree = "<group>"; };
+		D7CC45A82435CBA700B5E148 /* VideoEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = VideoEngine.swift; path = ../../../Kitsunebi/Classes/VideoEngine.swift; sourceTree = "<group>"; };
+		D7CC45A92435CBA700B5E148 /* MTLDevice+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MTLDevice+.swift"; path = "../../../Kitsunebi/Classes/MTLDevice+.swift"; sourceTree = "<group>"; };
+		D7CC45AA2435CBA700B5E148 /* CVPixelBuffer+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CVPixelBuffer+.swift"; path = "../../../Kitsunebi/Classes/CVPixelBuffer+.swift"; sourceTree = "<group>"; };
+		D7CC45AB2435CBA700B5E148 /* Bundle+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Bundle+.swift"; path = "../../../Kitsunebi/Classes/Bundle+.swift"; sourceTree = "<group>"; };
+		D7CC45AC2435CBA700B5E148 /* Asset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Asset.swift; path = ../../../Kitsunebi/Classes/Asset.swift; sourceTree = "<group>"; };
+		D7CC45AD2435CBA700B5E148 /* AnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimationView.swift; path = ../../../Kitsunebi/Classes/AnimationView.swift; sourceTree = "<group>"; };
+		D7CC45AE2435CBA700B5E148 /* WeakProxy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WeakProxy.swift; path = ../../../Kitsunebi/Classes/WeakProxy.swift; sourceTree = "<group>"; };
+		D7CC45AF2435CBA700B5E148 /* FPSKeeper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSKeeper.swift; path = ../../../Kitsunebi/Classes/FPSKeeper.swift; sourceTree = "<group>"; };
+		D7CC45B02435CBA700B5E148 /* CAMetalLayerInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CAMetalLayerInterface.swift; path = ../../../Kitsunebi/Classes/CAMetalLayerInterface.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,14 +76,21 @@
 		3727AC8B20A6E56400D6F6EB /* Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
-				D79D945B242DA9F900297CB2 /* Error.swift */,
-				D79D945C242DA9F900297CB2 /* FPSDebugger.swift */,
-				D79D9460242DA9F900297CB2 /* FPSKeeper.swift */,
-				D79D945D242DA9F900297CB2 /* KBAnimationView.swift */,
-				D79D945A242DA9F900297CB2 /* KBApplicationHandler.swift */,
-				D79D9459242DA9F900297CB2 /* KBAsset.swift */,
-				D79D945E242DA9F900297CB2 /* KBVideoEngine.swift */,
-				D79D945F242DA9F900297CB2 /* WeakProxy.swift */,
+				D7CC45AD2435CBA700B5E148 /* AnimationView.swift */,
+				D7CC45A22435CBA700B5E148 /* ApplicationHandler.swift */,
+				D7CC45AC2435CBA700B5E148 /* Asset.swift */,
+				D7CC45AB2435CBA700B5E148 /* Bundle+.swift */,
+				D7CC45B02435CBA700B5E148 /* CAMetalLayerInterface.swift */,
+				D7CC45A72435CBA700B5E148 /* CVMetalTexture+.swift */,
+				D7CC45A52435CBA700B5E148 /* CVMetalTextureCache+.swift */,
+				D7CC45AA2435CBA700B5E148 /* CVPixelBuffer+.swift */,
+				D7CC45A42435CBA700B5E148 /* default.metal */,
+				D7CC45A62435CBA700B5E148 /* Error.swift */,
+				D7CC45A32435CBA700B5E148 /* FPSDebugger.swift */,
+				D7CC45AF2435CBA700B5E148 /* FPSKeeper.swift */,
+				D7CC45A92435CBA700B5E148 /* MTLDevice+.swift */,
+				D7CC45A82435CBA700B5E148 /* VideoEngine.swift */,
+				D7CC45AE2435CBA700B5E148 /* WeakProxy.swift */,
 				3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */,
 				3727AC8D20A6E56400D6F6EB /* Info.plist */,
 			);
@@ -155,14 +176,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D79D9466242DA9F900297CB2 /* KBAnimationView.swift in Sources */,
-				D79D9464242DA9F900297CB2 /* Error.swift in Sources */,
-				D79D9463242DA9F900297CB2 /* KBApplicationHandler.swift in Sources */,
-				D79D9468242DA9F900297CB2 /* WeakProxy.swift in Sources */,
-				D79D9462242DA9F900297CB2 /* KBAsset.swift in Sources */,
-				D79D9469242DA9F900297CB2 /* FPSKeeper.swift in Sources */,
-				D79D9467242DA9F900297CB2 /* KBVideoEngine.swift in Sources */,
-				D79D9465242DA9F900297CB2 /* FPSDebugger.swift in Sources */,
+				D7CC45B72435CBA700B5E148 /* VideoEngine.swift in Sources */,
+				D7CC45B92435CBA700B5E148 /* CVPixelBuffer+.swift in Sources */,
+				D7CC45B22435CBA700B5E148 /* FPSDebugger.swift in Sources */,
+				D7CC45BB2435CBA700B5E148 /* Asset.swift in Sources */,
+				D7CC45BD2435CBA700B5E148 /* WeakProxy.swift in Sources */,
+				D7CC45B42435CBA700B5E148 /* CVMetalTextureCache+.swift in Sources */,
+				D7CC45B82435CBA700B5E148 /* MTLDevice+.swift in Sources */,
+				D7CC45BE2435CBA700B5E148 /* FPSKeeper.swift in Sources */,
+				D7CC45B62435CBA700B5E148 /* CVMetalTexture+.swift in Sources */,
+				D7CC45BF2435CBA700B5E148 /* CAMetalLayerInterface.swift in Sources */,
+				D7CC45B12435CBA700B5E148 /* ApplicationHandler.swift in Sources */,
+				D7CC45B52435CBA700B5E148 /* Error.swift in Sources */,
+				D7CC45BC2435CBA700B5E148 /* AnimationView.swift in Sources */,
+				D7CC45B32435CBA700B5E148 /* default.metal in Sources */,
+				D7CC45BA2435CBA700B5E148 /* Bundle+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
