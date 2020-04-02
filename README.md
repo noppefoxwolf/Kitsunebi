@@ -35,14 +35,6 @@ let alphaVideoURL = Bundle.main.url(forResource: "alpha", withExtension: "mp4")!
 playerView.play(base: baseVideoURL, alpha: alphaVideoURL, fps: 30)
 ```
 
-### customize video quality
-
-If video playing are slow, change quality.
-
-```swift
-playerView.quality = .low
-```
-
 ## Installation
 
 Kitsunebi is available through [CocoaPods](http://cocoapods.org). To install
