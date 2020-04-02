@@ -23,10 +23,10 @@ vertex ColorInOut vertexShader(const device float4 *position [[ buffer(0) ]],
 }
 
 fragment half4 fragmentShader(ColorInOut in [[ stage_in ]],
-                              texture2d<half> texture1 [[ texture(0) ]],
-                              texture2d<half> texture2 [[ texture(1) ]]) {
+                              texture2d<half> baseTexture [[ texture(0) ]],
+                              texture2d<half> alphaTexture [[ texture(1) ]]) {
   constexpr sampler colorSampler;
-  half4 color1 = texture1.sample(colorSampler, in.texCoords);
-  half4 color2 = texture2.sample(colorSampler, in.texCoords);
-  return half4(color1.r, color1.g, color1.b, color2.r);
+  half4 baseColor = baseTexture.sample(colorSampler, in.texCoords);
+  half4 alphaColor = alphaTexture.sample(colorSampler, in.texCoords);
+  return half4(baseColor.r, baseColor.g, baseColor.b, alphaColor.r);
 }

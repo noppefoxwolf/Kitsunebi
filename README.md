@@ -16,10 +16,10 @@ At the top of your file, make sure to `import Kitsunebi`
 import Kitsunebi
 ```
 
-Then, instantiate KBAnimationView in your view controller:
+Then, instantiate AnimationView in your view controller:
 
 ```swift
-private lazy var playerView: KBAnimationView = KBAnimationView(frame: view.bounds)!
+private lazy var playerView: AnimationView = AnimationView(frame: view.bounds)!
 
 override func viewDidLoad() {
     super.viewDidLoad()

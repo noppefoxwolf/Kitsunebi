@@ -1,5 +1,5 @@
 //
-//  KBApplicationHandler.swift
+//  ApplicationHandler.swift
 //  Kitsunebi
 //
 //  Created by Tomoya Hirano on 2018/04/13.
@@ -7,14 +7,14 @@
 
 import UIKit
 
-protocol KBApplicationHandlerDelegate: class {
+protocol ApplicationHandlerDelegate: class {
   func willResignActive(_ notification: Notification)
   func didBecomeActive(_ notification: Notification)
 }
 
-final class KBApplicationHandler {
+final class ApplicationHandler {
   private(set) var isActive: Bool = true
-  internal weak var delegate: KBApplicationHandlerDelegate? = nil
+  internal weak var delegate: ApplicationHandlerDelegate? = nil
   
   init() {
     let center = NotificationCenter.default

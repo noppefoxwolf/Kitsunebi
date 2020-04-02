@@ -1,5 +1,5 @@
 //
-//  KBAsset.swift
+//  Asset.swift
 //  Kitsunebi
 //
 //  Created by Tomoya Hirano on 2018/04/13.
@@ -7,7 +7,7 @@
 
 import AVFoundation
 
-final class KBAsset {
+final class Asset {
   private let outputSettings: [String : Any] = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
   let asset: AVURLAsset
   lazy var reader: AVAssetReader = { preconditionFailure() }()
@@ -40,12 +40,12 @@ final class KBAsset {
       throw error
     }
     if status != .reading {
-      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not reading"])
+      throw AssetError.readerWasStopped
     }
     if let sampleBuffer = output.copyNextSampleBuffer(), let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
       return imageBuffer
     } else {
-      throw NSError(domain: "KBAssetErrorDomain", code: 0, userInfo: ["message" : "reader not return image"])
+      throw AssetError.readerNotReturnedImage
     }
   }
 }

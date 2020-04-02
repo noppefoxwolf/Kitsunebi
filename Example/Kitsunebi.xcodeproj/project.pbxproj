@@ -15,7 +15,6 @@
 		D72C379721410B7800F6D22F /* ResourceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72C379621410B7800F6D22F /* ResourceViewController.swift */; };
 		D72C379A21410B9E00F6D22F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D72C379921410B9E00F6D22F /* Models.swift */; };
 		D7791985208744A1000C3E18 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = D7791984208744A0000C3E18 /* logo.png */; };
-		D79D9457242CC5C700297CB2 /* default.metal in Sources */ = {isa = PBXBuildFile; fileRef = D79D9456242CC5C700297CB2 /* default.metal */; };
 		E2CAB7B5F04A203502BC5156 /* Pods_Kitsunebi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5132DBA2BB7A65D07CBA851 /* Pods_Kitsunebi_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -41,7 +40,6 @@
 		D72C379621410B7800F6D22F /* ResourceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceViewController.swift; sourceTree = "<group>"; };
 		D72C379921410B9E00F6D22F /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		D7791984208744A0000C3E18 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
-		D79D9456242CC5C700297CB2 /* default.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = default.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +77,6 @@
 		607FACD21AFB9204008FA782 /* Example for Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
-				D79D9456242CC5C700297CB2 /* default.metal */,
 				D72C379821410B8E00F6D22F /* Model */,
 				D72C379521410B6700F6D22F /* Controller */,
 				D7791984208744A0000C3E18 /* logo.png */,
@@ -285,7 +282,6 @@
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				D72C379721410B7800F6D22F /* ResourceViewController.swift in Sources */,
 				D72C379A21410B9E00F6D22F /* Models.swift in Sources */,
-				D79D9457242CC5C700297CB2 /* default.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +354,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -407,7 +403,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -425,7 +421,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 582LEGWZJK;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -445,7 +441,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 582LEGWZJK;
 				INFOPLIST_FILE = Kitsunebi/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";

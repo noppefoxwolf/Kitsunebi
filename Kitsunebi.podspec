@@ -13,5 +13,5 @@ Overlay alpha channel video animation player view using OpenGLES.
   s.ios.deployment_target = '12.0'
   s.pod_target_xcconfig = { 'SWIFT_VERSION' => '5.2' }
   
-  s.source_files = 'Kitsunebi/Classes/**/*'
+  s.source_files = 'Kitsunebi/Classes/**/*.{swift,metal}'
 end

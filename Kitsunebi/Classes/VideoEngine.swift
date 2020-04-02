@@ -1,5 +1,5 @@
 //
-//  KBVideoEngine.swift
+//  VideoEngine.swift
 //  Kitsunebi
 //
 //  Created by Tomoya Hirano on 2018/04/13.
@@ -8,32 +8,31 @@
 import AVFoundation
 import CoreImage
 
-internal protocol KBVideoEngineUpdateDelegate: class {
-  @discardableResult
-  func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) -> Bool
+internal protocol VideoEngineUpdateDelegate: class {
+  func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer)
   func didReceiveError(_ error: Swift.Error?)
   func didCompleted()
 }
 
-internal protocol KBVideoEngineDelegate: class {
-  func didUpdateFrame(_ index: Int, engine: KBVideoEngine)
-  func engineDidFinishPlaying(_ engine: KBVideoEngine)
+internal protocol VideoEngineDelegate: class {
+  func didUpdateFrame(_ index: Int, engine: VideoEngine)
+  func engineDidFinishPlaying(_ engine: VideoEngine)
 }
 
-internal class KBVideoEngine: NSObject {
-  private let mainAsset: KBAsset
-  private let alphaAsset: KBAsset
+internal class VideoEngine: NSObject {
+  private let mainAsset: Asset
+  private let alphaAsset: Asset
   private let fpsKeeper: FPSKeeper
-  private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.update))
-  internal weak var delegate: KBVideoEngineDelegate? = nil
-  internal weak var updateDelegate: KBVideoEngineUpdateDelegate? = nil
+  private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(VideoEngine.update))
+  internal weak var delegate: VideoEngineDelegate? = nil
+  internal weak var updateDelegate: VideoEngineUpdateDelegate? = nil
   private var isRunningTheread = true
-  private lazy var renderThread: Thread = .init(target: WeakProxy(target: self), selector: #selector(KBVideoEngine.threadLoop), object: nil)
+  private lazy var renderThread: Thread = .init(target: WeakProxy(target: self), selector: #selector(VideoEngine.threadLoop), object: nil)
   private lazy var currentFrameIndex: Int = 0
   
   public init(mainVideoUrl: URL, alphaVideoUrl: URL, fps: Int) {
-    mainAsset = KBAsset(url: mainVideoUrl)
-    alphaAsset = KBAsset(url: alphaVideoUrl)
+    mainAsset = Asset(url: mainVideoUrl)
+    alphaAsset = Asset(url: alphaVideoUrl)
     fpsKeeper = FPSKeeper(fps: fps)
     super.init()
     renderThread.start()

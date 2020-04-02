@@ -17,7 +17,7 @@ final class PreviewViewController: UIViewController {
   private lazy var cameraSession: AVCaptureSession = .init()
   private lazy var cameraLayer: AVCaptureVideoPreviewLayer = .init(session: cameraSession)
   @IBOutlet private weak var backgroundContentView: UIImageView!
-  @IBOutlet private weak var playerView: KBAnimationView!
+  @IBOutlet private weak var playerView: AnimationView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -47,12 +47,12 @@ final class PreviewViewController: UIViewController {
   }
 }
 
-extension PreviewViewController: KBAnimationViewDelegate {
-  func didUpdateFrame(_ index: Int, animationView: KBAnimationView) {
+extension PreviewViewController: AnimationViewDelegate {
+  func didUpdateFrame(_ index: Int, animationView: AnimationView) {
     print("INDEX : ", index)
   }
   
-  func animationViewDidFinish(_ animationView: KBAnimationView) {
+  func animationViewDidFinish(_ animationView: AnimationView) {
     do {
       try play()
     } catch {
