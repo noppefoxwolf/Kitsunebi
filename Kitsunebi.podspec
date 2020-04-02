@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Kitsunebi'
-  s.version          = '0.20.0'
+  s.version          = '0.20.2'
   s.summary          = 'Overlay alpha channel video animation player view.'
   s.description      = <<-DESC
 Overlay alpha channel video animation player view using Metal.
@@ -11,7 +11,7 @@ Overlay alpha channel video animation player view using Metal.
   s.source           = { :git => 'https://github.com/noppefoxwolf/Kitsunebi.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/noppefoxwolf'
   s.ios.deployment_target = '12.0'
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '5.2' }
+  s.swift_versions = '5.2'
   
   s.source_files = 'Kitsunebi/Classes/**/*.{swift,metal}'
 end
