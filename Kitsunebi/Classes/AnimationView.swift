@@ -66,6 +66,9 @@ open class PlayerView: UIView {
     gpuLayer.pixelFormat = .bgra8Unorm
     gpuLayer.framebufferOnly = false
     gpuLayer.presentsWithTransaction = false
+    if #available(iOS 13.0, *) {
+        (gpuLayer as? CAMetalLayer)?.device = device
+    }
   }
   
   required public init?(coder aDecoder: NSCoder) {
@@ -88,6 +91,9 @@ open class PlayerView: UIView {
     gpuLayer.pixelFormat = .bgra8Unorm
     gpuLayer.framebufferOnly = false
     gpuLayer.presentsWithTransaction = false
+    if #available(iOS 13.0, *) {
+        (gpuLayer as? CAMetalLayer)?.device = device
+    }
   }
   
   deinit {
