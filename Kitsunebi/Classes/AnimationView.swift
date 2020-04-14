@@ -120,16 +120,28 @@ open class PlayerView: UIView {
   }
   
   private func clear() {
-    let renderDesc = MTLRenderPassDescriptor()
-    renderDesc.colorAttachments[0].loadAction = .clear
-    renderDesc.renderTargetWidth = 1
-    renderDesc.renderTargetHeight = 1
-    renderDesc.defaultRasterSampleCount = 1
-    let commandBuffer = commandQueue.makeCommandBuffer()
-    let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderDesc)
-    renderEncoder?.endEncoding()
-    commandBuffer?.commit()
-    textureCache.flush()
+    DispatchQueue.main.async { [weak self] in
+      /// `gpuLayer` must access within main-thread.
+      guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
+      self?.renderQueue.async { [weak self] in
+        self?.clear(nextDrawable: nextDrawable)
+      }
+    }
+  }
+  
+  private func clear(nextDrawable: CAMetalDrawable) {
+    renderQueue.async { [weak self] in
+      let renderPassDescriptor = MTLRenderPassDescriptor()
+      renderPassDescriptor.colorAttachments[0].texture = nextDrawable.texture
+      renderPassDescriptor.colorAttachments[0].loadAction = .clear
+      renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+      
+      let commandBuffer = self?.commandQueue.makeCommandBuffer()
+      let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+      renderEncoder?.endEncoding()
+      commandBuffer?.commit()
+      self?.textureCache.flush()
+    }
   }
 }
 
@@ -144,7 +156,7 @@ extension PlayerView: VideoEngineUpdateDelegate {
         do {
           try self?.renderImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer, to: nextDrawable)
         } catch {
-          self?.clear()
+          self?.clear(nextDrawable: nextDrawable)
         }
       }
     }
@@ -152,16 +164,12 @@ extension PlayerView: VideoEngineUpdateDelegate {
   
   internal func didReceiveError(_ error: Swift.Error?) {
     guard applicationHandler.isActive else { return }
-    renderQueue.async { [weak self] in
-      self?.clear()
-    }
+    clear()
   }
   
   internal func didCompleted() {
     guard applicationHandler.isActive else { return }
-    renderQueue.async { [weak self] in
-      self?.clear()
-    }
+    clear()
   }
 }
 
