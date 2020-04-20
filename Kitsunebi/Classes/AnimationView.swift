@@ -27,7 +27,7 @@ open class PlayerView: UIView {
     #endif
   }
   private var gpuLayer: LayerClass { self.layer as! LayerClass }
-  private let renderQueue: DispatchQueue = .global()
+  private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
   private let vertexBuffer: MTLBuffer
