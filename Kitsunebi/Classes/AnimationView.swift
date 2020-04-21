@@ -20,13 +20,14 @@ open class PlayerView: UIView {
     if #available(iOS 13, *) {
       return CAMetalLayer.self
     } else {
-      preconditionFailure("Kitsunebi not support simurator older than iOS12.")
+        print("[Kitsunebi] Kitsunebi init failed.Kitsunebi not support simurator older than iOS12.")
+        return CALayer.self
     }
     #else
     return CAMetalLayer.self
     #endif
   }
-  private var gpuLayer: LayerClass { self.layer as! LayerClass }
+  private var gpuLayer: LayerClass? { self.layer as? LayerClass }
   private let renderQueue: DispatchQueue = .global()
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
@@ -36,9 +37,18 @@ open class PlayerView: UIView {
   private var applicationHandler = ApplicationHandler()
   
   public weak var delegate: PlayerViewDelegate? = nil
+        
   internal var engineInstance: VideoEngine? = nil
-  
+    
   public func play(base baseVideoURL: URL, alpha alphaVideoURL: URL, fps: Int) throws {
+    #if targetEnvironment(simulator)
+    if #available(iOS 13, *) {
+    } else {
+        print("[Kitsunebi] Kitsunebi play failed. Kitsunebi not support simurator older than iOS12.")
+        return
+    }
+    #endif
+    
     engineInstance?.purge()
     engineInstance = VideoEngine(base: baseVideoURL, alpha: alphaVideoURL, fps: fps)
     engineInstance?.updateDelegate = self
@@ -60,12 +70,14 @@ open class PlayerView: UIView {
     super.init(frame: frame)
     applicationHandler.delegate = self
     backgroundColor = .clear
-    gpuLayer.isOpaque = false
-    gpuLayer.drawsAsynchronously = true
-    gpuLayer.contentsGravity = .resizeAspectFill
-    gpuLayer.pixelFormat = .bgra8Unorm
-    gpuLayer.framebufferOnly = false
-    gpuLayer.presentsWithTransaction = false
+    if let gpuLayer = self.gpuLayer {
+        gpuLayer.isOpaque = false
+        gpuLayer.drawsAsynchronously = true
+        gpuLayer.contentsGravity = .resizeAspectFill
+        gpuLayer.pixelFormat = .bgra8Unorm
+        gpuLayer.framebufferOnly = false
+        gpuLayer.presentsWithTransaction = false
+    }
   }
   
   required public init?(coder aDecoder: NSCoder) {
@@ -82,12 +94,14 @@ open class PlayerView: UIView {
     super.init(coder: aDecoder)
     applicationHandler.delegate = self
     backgroundColor = .clear
-    gpuLayer.isOpaque = false
-    gpuLayer.drawsAsynchronously = true
-    gpuLayer.contentsGravity = .resizeAspectFill
-    gpuLayer.pixelFormat = .bgra8Unorm
-    gpuLayer.framebufferOnly = false
-    gpuLayer.presentsWithTransaction = false
+    if let gpuLayer = self.gpuLayer {
+        gpuLayer.isOpaque = false
+        gpuLayer.drawsAsynchronously = true
+        gpuLayer.contentsGravity = .resizeAspectFill
+        gpuLayer.pixelFormat = .bgra8Unorm
+        gpuLayer.framebufferOnly = false
+        gpuLayer.presentsWithTransaction = false
+    }
   }
   
   deinit {
@@ -138,8 +152,8 @@ extension PlayerView: VideoEngineUpdateDelegate {
     guard applicationHandler.isActive else { return }
     DispatchQueue.main.async { [weak self] in
       /// `gpuLayer` must access within main-thread.
-      guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
-      self?.gpuLayer.drawableSize = basePixelBuffer.size
+      guard let nextDrawable = self?.gpuLayer?.nextDrawable() else { return }
+      self?.gpuLayer?.drawableSize = basePixelBuffer.size
       self?.renderQueue.async { [weak self] in
         do {
           try self?.renderImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer, to: nextDrawable)
