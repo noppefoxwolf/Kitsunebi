@@ -8,7 +8,10 @@
 import AVFoundation
 
 final class Asset {
-  private let outputSettings: [String : Any] = [kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA]
+  private let outputSettings: [String : Any] = [
+    kCVPixelBufferPixelFormatTypeKey as String : kCVPixelFormatType_32BGRA,
+    kCVPixelBufferMetalCompatibilityKey as String : true,
+  ]
   let asset: AVURLAsset
   lazy var reader: AVAssetReader = { preconditionFailure() }()
   lazy var output: AVAssetReaderTrackOutput = { preconditionFailure() }()
