@@ -139,6 +139,7 @@ open class PlayerView: UIView {
       let commandBuffer = self?.commandQueue.makeCommandBuffer()
       let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
       renderEncoder?.endEncoding()
+      commandBuffer?.present(nextDrawable)
       commandBuffer?.commit()
       self?.textureCache.flush()
     }
