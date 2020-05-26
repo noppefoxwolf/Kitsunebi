@@ -20,7 +20,7 @@ open class PlayerView: UIView {
     if #available(iOS 13, *) {
       return CAMetalLayer.self
     } else {
-      preconditionFailure("Kitsunebi not support simurator older than iOS12.")
+      return UnsupportedLayer.self
     }
     #else
     return CAMetalLayer.self
