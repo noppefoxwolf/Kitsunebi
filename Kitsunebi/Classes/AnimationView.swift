@@ -95,8 +95,10 @@ open class PlayerView: UIView {
   }
   
   private func renderImage(with basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer, to nextDrawable: CAMetalDrawable) throws {
-    let baseTexture = try textureCache.makeTextureFromImage(basePixelBuffer).texture
-    let alphaTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer).texture
+    let baseYTexture = try textureCache.makeTextureFromImage(basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0).texture
+    let baseCbCrTexture = try textureCache.makeTextureFromImage(basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1).texture
+    let alphaYTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0).texture
+    let alphaCbCrTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1).texture
     
     
     let renderDesc = MTLRenderPassDescriptor()
@@ -107,13 +109,16 @@ open class PlayerView: UIView {
       renderEncoder.setRenderPipelineState(pipelineState)
       renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
       renderEncoder.setVertexBuffer(texCoordBuffer, offset: 0, index: 1)
-      renderEncoder.setFragmentTexture(baseTexture, index: 0)
-      renderEncoder.setFragmentTexture(alphaTexture, index: 1)
+      renderEncoder.setFragmentTexture(baseYTexture, index: 0)
+      renderEncoder.setFragmentTexture(alphaYTexture, index: 1)
+      renderEncoder.setFragmentTexture(baseCbCrTexture, index: 2)
+      renderEncoder.setFragmentTexture(alphaCbCrTexture, index: 3)
       renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
       renderEncoder.endEncoding()
       
       commandBuffer.present(nextDrawable)
       commandBuffer.commit()
+      commandBuffer.waitUntilCompleted()
     }
     
     textureCache.flush()
