@@ -5,6 +5,7 @@
 //  Created by Tomoya Hirano on 2020/04/02.
 //
 
+import CoreMedia
 import CoreVideo
 
 extension CVMetalTextureCache {
@@ -12,18 +13,19 @@ extension CVMetalTextureCache {
     CVMetalTextureCacheFlush(self, options)
   }
   
-  func makeTextureFromImage(_ buffer: CVImageBuffer) throws -> CVMetalTexture {
-    let size = CVImageBufferGetEncodedSize(buffer)
+  func makeTextureFromImage(_ buffer: CVImageBuffer, pixelFormat: MTLPixelFormat, planeIndex: Int) throws -> CVMetalTexture {
+    let width = CVPixelBufferGetWidthOfPlane(buffer, planeIndex)
+    let height = CVPixelBufferGetHeightOfPlane(buffer, planeIndex)
     var imageTexture: CVMetalTexture?
     let result = CVMetalTextureCacheCreateTextureFromImage(
       kCFAllocatorDefault,
       self,
       buffer,
       nil,
-      .bgra8Unorm,
-      Int(size.width),
-      Int(size.height),
-      0,
+      pixelFormat,
+      width,
+      height,
+      planeIndex,
       &imageTexture
     )
     if let imageTexture = imageTexture {
