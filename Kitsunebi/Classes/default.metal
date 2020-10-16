@@ -25,8 +25,7 @@ vertex ColorInOut vertexShader(const device float4 *position [[ buffer(0) ]],
 fragment float4 fragmentShader(ColorInOut in [[ stage_in ]],
                               texture2d<float> baseYTexture [[ texture(0) ]],
                               texture2d<float> alphaYTexture [[ texture(1) ]],
-                              texture2d<float> baseCbCrTexture [[ texture(2) ]],
-                              texture2d<float> alphaCbCrTexture [[ texture(3) ]]) {
+                              texture2d<float> baseCbCrTexture [[ texture(2) ]]) {
   constexpr sampler colorSampler;
   const float4x4 ycbcrToRGBTransform = float4x4(
       float4(+1.0000f, +1.0000f, +1.0000f, +0.0000f),
@@ -39,9 +38,7 @@ fragment float4 fragmentShader(ColorInOut in [[ stage_in ]],
                                                 baseCbCrTexture.sample(colorSampler, in.texCoords).rg,
                                                 1.0);
   
-  float4 alphaColor = ycbcrToRGBTransform * float4(alphaYTexture.sample(colorSampler, in.texCoords).r,
-                                                 alphaCbCrTexture.sample(colorSampler, in.texCoords).rg,
-                                                 1.0);
+  float4 alphaColor = alphaYTexture.sample(colorSampler, in.texCoords).r;
   
   return float4(baseColor.r, baseColor.g, baseColor.b, alphaColor.r);
 }
