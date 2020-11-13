@@ -12,18 +12,17 @@ final class Asset {
     kCVPixelBufferMetalCompatibilityKey as String : true,
   ]
   let asset: AVURLAsset
-  lazy var reader: AVAssetReader = { preconditionFailure() }()
-  lazy var output: AVAssetReaderTrackOutput = { preconditionFailure() }()
-  var status: AVAssetReader.Status { return reader.status }
-  var isRunning: Bool { return reader.status != .completed && reader.status != .cancelled }
+  private var reader: AVAssetReader? = nil
+  private var output: AVAssetReaderTrackOutput? = nil
+  var status: AVAssetReader.Status? { reader?.status }
   
   init(url: URL) {
     asset = AVURLAsset(url: url)
   }
   
   func reset() throws {
-    reader = try AVAssetReader(asset: asset)
-    output = AVAssetReaderTrackOutput(track: asset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
+    let reader = try AVAssetReader(asset: asset)
+    let output = AVAssetReaderTrackOutput(track: asset.tracks(withMediaType: AVMediaType.video)[0], outputSettings: outputSettings)
     if reader.canAdd(output) {
       reader.add(output)
     } else {
@@ -31,20 +30,23 @@ final class Asset {
     }
     output.alwaysCopiesSampleData = false
     reader.startReading()
+    
+    self.reader = reader
+    self.output = output
   }
   
   func cancelReading() {
-    reader.cancelReading()
+    reader?.cancelReading()
   }
   
   func copyNextImageBuffer() throws -> CVImageBuffer {
-    if let error = reader.error {
+    if let error = reader?.error {
       throw error
     }
     if status != .reading {
       throw AssetError.readerWasStopped
     }
-    if let sampleBuffer = output.copyNextSampleBuffer(), let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+    if let sampleBuffer = output?.copyNextSampleBuffer(), let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
       return imageBuffer
     } else {
       throw AssetError.readerNotReturnedImage
