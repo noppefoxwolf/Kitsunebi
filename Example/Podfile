@@ -5,3 +5,7 @@ platform :ios, '12.0'
 target 'Kitsunebi_Example' do
   pod 'Kitsunebi', :path => '../'
 end
+
+target 'Tests' do
+  pod 'Kitsunebi', :path => '../'
+end
