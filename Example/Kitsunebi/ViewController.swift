@@ -34,6 +34,12 @@ final class PreviewViewController: UIViewController {
   
   private func play() throws {
     guard let resource = currentResource else { return }
+    if #available(iOS 13.0, *) {
+      if resource.hevcWithAlphaVideoSize != nil {
+        try playerView.play(hevcWithAlpha: resource.hevcWithAlphaVideoURL, fps: resource.fps)
+        return;
+      }
+    }
     try playerView.play(base: resource.baseVideoURL, alpha: resource.alphaVideoURL, fps: resource.fps)
   }
   

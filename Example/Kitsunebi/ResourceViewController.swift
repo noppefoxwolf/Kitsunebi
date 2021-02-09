@@ -94,7 +94,14 @@ extension ResourceViewController: UITableViewDelegate, UITableViewDataSource {
     let aSize = resource.alphaVideoSize
     let baseText = mSize != nil ? "Base w\(mSize!.width) x h\(mSize!.height)" : "base.mp4 not found"
     let alphaText = aSize != nil ? "Alpha: w\(aSize!.width) x h\(aSize!.height)" : "alpha.mp4 not found"
-    cell.detailTextLabel?.text = "\(baseText) / \(alphaText)"
+    var text = "\(baseText) / \(alphaText)"
+    if #available(iOS 13.0, *) {
+      let hevcWithAlphaSize = resource.hevcWithAlphaVideoSize
+      if hevcWithAlphaSize != nil {
+        text = "HEVC with Alpha: w\(hevcWithAlphaSize!.width) x h\(hevcWithAlphaSize!.height)"
+      }
+    }
+    cell.detailTextLabel?.text = text
     if let selected = selectedResource, selected.name == resource.name {
       cell.accessoryType = .checkmark
     } else {
