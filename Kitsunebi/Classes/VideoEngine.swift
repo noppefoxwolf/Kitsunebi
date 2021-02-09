@@ -9,7 +9,7 @@ import AVFoundation
 import CoreImage
 
 internal protocol VideoEngineUpdateDelegate: class {
-  func didOutputFrame(_ basePixelBuffer: [CVPixelBuffer])
+  func didOutputFrame(_ frame: Frame)
   func didReceiveError(_ error: Swift.Error?)
   func didCompleted()
 }
@@ -19,8 +19,13 @@ internal protocol VideoEngineDelegate: class {
   func engineDidFinishPlaying(_ engine: VideoEngine)
 }
 
+enum VideoEngineAsset {
+    case yCbCrWithA(yCbCr: Asset, a: Asset)
+    case yCbCrA(yCbCrA: Asset)
+}
+
 internal class VideoEngine: NSObject {
-  private let assets: [Asset]
+  private let asset: VideoEngineAsset
   private let fpsKeeper: FPSKeeper
   private lazy var displayLink: CADisplayLink = .init(target: WeakProxy(target: self), selector: #selector(VideoEngine.update))
   internal weak var delegate: VideoEngineDelegate? = nil
@@ -32,17 +37,16 @@ internal class VideoEngine: NSObject {
   public init(base baseVideoURL: URL, alpha alphaVideoURL: URL, fps: Int) {
     let baseAsset = Asset(url: baseVideoURL)
     let alphaAsset = Asset(url: alphaVideoURL)
-    assets = [baseAsset, alphaAsset]
+    asset = .yCbCrWithA(yCbCr: baseAsset, a: alphaAsset)
     fpsKeeper = FPSKeeper(fps: fps)
     super.init()
     renderThread.start()
-    
   }
   
   @available(iOS 13.0, *)
   public init(hevcWithAlpha hevcWithAlphaVideoURL: URL, fps: Int) {
     let hevcWithAlphaAsset = Asset(url: hevcWithAlphaVideoURL)
-    assets = [hevcWithAlphaAsset]
+    asset = .yCbCrA(yCbCrA: hevcWithAlphaAsset)
     fpsKeeper = FPSKeeper(fps: fps)
     super.init()
     renderThread.start()
@@ -71,14 +75,22 @@ internal class VideoEngine: NSObject {
   }
   
   private func reset() throws {
-    for asset in assets {
-      try asset.reset()
+    switch asset {
+    case let .yCbCrA(yCbCrA):
+        try yCbCrA.reset()
+    case let .yCbCrWithA(yCbCr, a):
+        try yCbCr.reset()
+        try a.reset()
     }
   }
   
   private func cancelReading() {
-    for asset in assets {
-      asset.cancelReading()
+    switch asset {
+    case let .yCbCrA(yCbCrA):
+        yCbCrA.cancelReading()
+    case let .yCbCrWithA(yCbCr, a):
+        yCbCr.cancelReading()
+        a.cancelReading()
     }
   }
   
@@ -118,12 +130,12 @@ internal class VideoEngine: NSObject {
   }
   
   private var isCompleted: Bool {
-    for asset in assets {
-      if asset.status == .completed {
-        return true
-      }
+    switch asset {
+    case let .yCbCrA(yCbCrA):
+        return yCbCrA.status == .completed
+    case let .yCbCrWithA(yCbCr, a):
+        return yCbCr.status == .completed || a.status == .completed
     }
-    return false
   }
   
   private func updateFrame() {
@@ -133,8 +145,8 @@ internal class VideoEngine: NSObject {
       return
     }
     do {
-      let pixelBuffers = try copyNextSampleBuffers()
-      updateDelegate?.didOutputFrame(pixelBuffers)
+      let frame = try copyNextFrame()
+      updateDelegate?.didOutputFrame(frame)
       
       currentFrameIndex += 1
       delegate?.didUpdateFrame(currentFrameIndex, engine: self)
@@ -144,13 +156,16 @@ internal class VideoEngine: NSObject {
     }
   }
   
-  private func copyNextSampleBuffers() throws -> [CVImageBuffer] {
-    var pixelBuffers: [CVImageBuffer] = []
-    for asset in assets {
-      let pixelBuffer = try asset.copyNextImageBuffer()
-      pixelBuffers.append(pixelBuffer)
+  private func copyNextFrame() throws -> Frame {
+    switch asset {
+    case let .yCbCrA(yCbCrA):
+        let yCbCrABuffer = try yCbCrA.copyNextImageBuffer()
+        return .yCbCrA(yCbCrA: yCbCrABuffer)
+    case let .yCbCrWithA(yCbCr, a):
+        let yCbCrBuffer = try yCbCr.copyNextImageBuffer()
+        let aBuffer = try a.copyNextImageBuffer()
+        return .yCbCrWithA(yCbCr: yCbCrBuffer, a: aBuffer)
     }
-    return pixelBuffers
   }
 }
 
