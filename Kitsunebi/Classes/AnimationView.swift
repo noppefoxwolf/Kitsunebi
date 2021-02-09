@@ -46,6 +46,15 @@ open class PlayerView: UIView {
     try engineInstance?.play()
   }
   
+  @available(iOS 13.0, *)
+  public func play(hevcWithAlpha hevcWithAlphaVideoURL: URL, fps: Int) throws {
+    engineInstance?.purge()
+    engineInstance = VideoEngine(hevcWithAlpha: hevcWithAlphaVideoURL, fps: fps)
+    engineInstance?.updateDelegate = self
+    engineInstance?.delegate = self
+    try engineInstance?.play()
+  }
+
   public init?(frame: CGRect, device: MTLDevice? = MTLCreateSystemDefaultDevice()) {
     guard let device = MTLCreateSystemDefaultDevice() else { return nil }
     guard let commandQueue = device.makeCommandQueue() else { return nil }
@@ -94,10 +103,14 @@ open class PlayerView: UIView {
     NotificationCenter.default.removeObserver(self)
   }
   
-  private func renderImage(with basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer, to nextDrawable: CAMetalDrawable) throws {
+  private func renderImage(with pixelBuffers: [CVPixelBuffer], to nextDrawable: CAMetalDrawable) throws {
+    let basePixelBuffer = pixelBuffers[0]
+    let hasAlphaPixelBuffer = pixelBuffers.count == 2
+    let alphaPixelBuffer = pixelBuffers[hasAlphaPixelBuffer ? 1 : 0]
+    let alphaPlaneIndex = hasAlphaPixelBuffer ? 0 : 2
     let baseYTexture = try textureCache.makeTextureFromImage(basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0).texture
     let baseCbCrTexture = try textureCache.makeTextureFromImage(basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1).texture
-    let alphaYTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0).texture
+    let alphaYTexture = try textureCache.makeTextureFromImage(alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: alphaPlaneIndex).texture
     
     let renderDesc = MTLRenderPassDescriptor()
     renderDesc.colorAttachments[0].texture = nextDrawable.texture
@@ -149,22 +162,22 @@ open class PlayerView: UIView {
 }
 
 extension PlayerView: VideoEngineUpdateDelegate {
-  internal func didOutputFrame(_ basePixelBuffer: CVPixelBuffer, alphaPixelBuffer: CVPixelBuffer) {
+  internal func didOutputFrame(_ pixelBuffers: [CVPixelBuffer]) {
     guard applicationHandler.isActive else { return }
     DispatchQueue.main.async { [weak self] in
       /// `gpuLayer` must access within main-thread.
       guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
-      self?.gpuLayer.drawableSize = basePixelBuffer.size
+      self?.gpuLayer.drawableSize = pixelBuffers[0].size
       self?.renderQueue.async { [weak self] in
         do {
-          try self?.renderImage(with: basePixelBuffer, alphaPixelBuffer: alphaPixelBuffer, to: nextDrawable)
+          try self?.renderImage(with: pixelBuffers, to: nextDrawable)
         } catch {
           self?.clear(nextDrawable: nextDrawable)
         }
       }
     }
   }
-  
+
   internal func didReceiveError(_ error: Swift.Error?) {
     guard applicationHandler.isActive else { return }
     clear()
