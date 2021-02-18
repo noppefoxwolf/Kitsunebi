@@ -30,8 +30,6 @@ open class PlayerView: UIView {
     private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
     private let commandQueue: MTLCommandQueue
     private let textureCache: CVMetalTextureCache
-    private let vertexBuffer: MTLBuffer
-    private let texCoordBuffer: MTLBuffer
     private let pipelineState: MTLRenderPipelineState
     private var applicationHandler = ApplicationHandler()
     
@@ -63,8 +61,6 @@ open class PlayerView: UIView {
         guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
         self.commandQueue = commandQueue
         self.textureCache = textureCache
-        self.vertexBuffer = device.makeVertexBuffer()
-        self.texCoordBuffer = device.makeTexureCoordBuffer()
         self.pipelineState = pipelineState
         super.init(frame: frame)
         applicationHandler.delegate = self
@@ -85,8 +81,6 @@ open class PlayerView: UIView {
         guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
         self.commandQueue = commandQueue
         self.textureCache = textureCache
-        self.vertexBuffer = device.makeVertexBuffer()
-        self.texCoordBuffer = device.makeTexureCoordBuffer()
         self.pipelineState = pipelineState
         super.init(coder: aDecoder)
         applicationHandler.delegate = self
@@ -112,8 +106,6 @@ open class PlayerView: UIView {
         
         if let commandBuffer = commandQueue.makeCommandBuffer(), let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderDesc) {
             renderEncoder.setRenderPipelineState(pipelineState)
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-            renderEncoder.setVertexBuffer(texCoordBuffer, offset: 0, index: 1)
             renderEncoder.setFragmentTexture(baseYTexture, index: 0)
             renderEncoder.setFragmentTexture(alphaYTexture, index: 1)
             renderEncoder.setFragmentTexture(baseCbCrTexture, index: 2)

@@ -13,13 +13,14 @@ struct ColorInOut {
   float2 texCoords;
 };
 
-vertex ColorInOut vertexShader(const device float4 *position [[ buffer(0) ]],
-                               const device float2 *texCoords [[ buffer(1) ]],
-                               uint    vid      [[ vertex_id ]]) {
-  ColorInOut out;
-  out.position = position[vid];
-  out.texCoords = texCoords[vid];
-  return out;
+vertex ColorInOut vertexShader(uint vid [[ vertex_id ]]) {
+  const ColorInOut vertices[4] = {
+    { float4(-1.0f, -1.0f, 0.0f, 1.0f), float2(0.0f, 1.0f) },
+    { float4(1.0f, -1.0f, 0.0f, 1.0f), float2(1.0f, 1.0f) },
+    { float4(-1.0f, 1.0f, 0.0f, 1.0f), float2(0.0f, 0.0f) },
+    { float4(1.0f, 1.0f, 0.0f, 1.0f), float2(1.0f, 0.0f) },
+  };
+  return vertices[vid];
 }
 
 fragment float4 fragmentShader(ColorInOut in [[ stage_in ]],
