@@ -115,9 +115,7 @@ open class PlayerView: UIView {
             commandBuffer.present(nextDrawable)
             commandBuffer.commit()
             commandBuffer.waitUntilCompleted()
-        }
-        
-        textureCache.flush()
+        }        
     }
     
     private func clear() {
