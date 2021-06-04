@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3727AC8E20A6E56400D6F6EB /* Kitsunebi.h in Headers */ = {isa = PBXBuildFile; fileRef = 3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7D73D9862669CCCA0050DB9A /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D73D9852669CCCA0050DB9A /* Frame.swift */; };
 		D77E204824CFFC6A005F34BB /* FPSDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77E203824CFFC69005F34BB /* FPSDebugger.swift */; };
 		D77E204924CFFC6A005F34BB /* ApplicationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77E203924CFFC69005F34BB /* ApplicationHandler.swift */; };
 		D77E204A24CFFC6A005F34BB /* CVPixelBuffer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77E203A24CFFC69005F34BB /* CVPixelBuffer+.swift */; };
@@ -30,6 +31,7 @@
 		3727AC8920A6E56400D6F6EB /* Kitsunebi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Kitsunebi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3727AC8C20A6E56400D6F6EB /* Kitsunebi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Kitsunebi.h; sourceTree = "<group>"; };
 		3727AC8D20A6E56400D6F6EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D73D9852669CCCA0050DB9A /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Frame.swift; path = ../../../Kitsunebi/Classes/Frame.swift; sourceTree = "<group>"; };
 		D77E203824CFFC69005F34BB /* FPSDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FPSDebugger.swift; path = ../../../Kitsunebi/Classes/FPSDebugger.swift; sourceTree = "<group>"; };
 		D77E203924CFFC69005F34BB /* ApplicationHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ApplicationHandler.swift; path = ../../../Kitsunebi/Classes/ApplicationHandler.swift; sourceTree = "<group>"; };
 		D77E203A24CFFC69005F34BB /* CVPixelBuffer+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CVPixelBuffer+.swift"; path = "../../../Kitsunebi/Classes/CVPixelBuffer+.swift"; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 		3727AC8B20A6E56400D6F6EB /* Kitsunebi */ = {
 			isa = PBXGroup;
 			children = (
+				7D73D9852669CCCA0050DB9A /* Frame.swift */,
 				D77E203C24CFFC6A005F34BB /* AnimationView.swift */,
 				D77E203924CFFC69005F34BB /* ApplicationHandler.swift */,
 				D77E204724CFFC6A005F34BB /* Asset.swift */,
@@ -188,6 +191,7 @@
 				D77E205724CFFC6A005F34BB /* Asset.swift in Sources */,
 				D77E204C24CFFC6A005F34BB /* AnimationView.swift in Sources */,
 				D77E204A24CFFC6A005F34BB /* CVPixelBuffer+.swift in Sources */,
+				7D73D9862669CCCA0050DB9A /* Frame.swift in Sources */,
 				D77E204E24CFFC6A005F34BB /* default.metal in Sources */,
 				D77E204D24CFFC6A005F34BB /* VideoEngine.swift in Sources */,
 				D77E205024CFFC6A005F34BB /* FPSKeeper.swift in Sources */,
