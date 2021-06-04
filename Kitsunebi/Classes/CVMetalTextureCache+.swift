@@ -10,7 +10,7 @@ import CoreVideo
 
 extension CVMetalTextureCache {
   func flush(options: CVOptionFlags = 0) {
-    CVMetalTextureCacheFlush(self, options)
+//    CVMetalTextureCacheFlush(self, options)
   }
   
   func makeTextureFromImage(_ buffer: CVImageBuffer, pixelFormat: MTLPixelFormat, planeIndex: Int) throws -> CVMetalTexture {
