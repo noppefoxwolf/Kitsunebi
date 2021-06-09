@@ -14,6 +14,7 @@ extension MTLDevice {
     var textureCache: CVMetalTextureCache?
     let attributes = [
       String(kCVMetalTextureUsage): 0x0001 | 0x0004,
+      String(kCVMetalTextureCacheMaximumTextureAgeKey): 0,
       // String(kCVMetalStorageMode): 2,
     ] as CFDictionary
     let result = CVMetalTextureCacheCreate(
