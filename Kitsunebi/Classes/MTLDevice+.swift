@@ -12,11 +12,15 @@ import CoreVideo
 extension MTLDevice {
   internal func makeTextureCache() throws -> CVMetalTextureCache {
     var textureCache: CVMetalTextureCache?
+    let attributes = [
+      String(kCVMetalTextureUsage): 0x0001 | 0x0004,
+      // String(kCVMetalStorageMode): 2,
+    ] as CFDictionary
     let result = CVMetalTextureCacheCreate(
       kCFAllocatorDefault,
       nil,
       self,
-      nil,
+      attributes,
       &textureCache
     )
     if let textureCache = textureCache {
