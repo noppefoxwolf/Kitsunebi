@@ -54,7 +54,7 @@ open class PlayerView: UIView {
     }
     
     public init?(frame: CGRect, device: MTLDevice? = MTLCreateSystemDefaultDevice()) {
-        guard let device = MTLCreateSystemDefaultDevice() else { return nil }
+        guard let device = device else { return nil }
         guard let commandQueue = device.makeCommandQueue() else { return nil }
         guard let textureCache = try? device.makeTextureCache() else { return nil }
         guard let metalLib = try? device.makeLibrary(URL: Bundle.current.defaultMetalLibraryURL) else { return nil }
