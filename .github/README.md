@@ -40,9 +40,9 @@ playerView.play(base: baseVideoURL, alpha: alphaVideoURL, fps: 30)
 Kitsunebi is available SwiftPM and Carthage. To install it, simply add the following line to your SwiftPM:
 
 ```swift
-    dependencies: [
-        .package(url: "https://github.com/noppefoxwolf/Kitsunebi", .upToNextMajor(from: "v1.0.0"))
-    ]
+dependencies: [
+    .package(url: "https://github.com/noppefoxwolf/Kitsunebi", .upToNextMajor(from: "v1.0.0"))
+]
 ```
 
 ```
