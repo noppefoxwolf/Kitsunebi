@@ -5,8 +5,8 @@
 //  Created by Tomoya Hirano on 2018/04/13.
 //
 
-import Foundation
 import CoreVideo
+import Foundation
 
 public enum Error: Swift.Error {
   case unknown(String)

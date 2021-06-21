@@ -13,11 +13,11 @@ final class FPSKeeper {
   init(fps: Int) {
     self.timeInterval = floor(1.0 / CFTimeInterval(fps) * 1000.0) / 1000.0
   }
-  
+
   func clear() {
     beforeTimeStamp = nil
   }
-  
+
   func checkPast1Frame(_ link: CADisplayLink) -> Bool {
     if let beforeTimeStamp = beforeTimeStamp {
       guard timeInterval <= link.timestamp - beforeTimeStamp else {

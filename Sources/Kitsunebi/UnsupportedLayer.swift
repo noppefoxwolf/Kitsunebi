@@ -15,7 +15,7 @@ class UnsupportedLayer: CALayer, CAMetalLayerInterface {
   func nextDrawable() -> CAMetalDrawable? {
     return nil
   }
-  
+
   required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
