@@ -15,6 +15,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run tests
         run: |
-          swift package generate-xcodeproj
           xcodebuild build -sdk iphoneos -scheme 'Kitsunebi'
           xcodebuild test -destination 'name=iPhone 11' -scheme 'Kitsunebi'
