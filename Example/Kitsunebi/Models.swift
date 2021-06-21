@@ -26,7 +26,6 @@ struct Resource {
   var alphaVideoURL: URL { return dirURL.appendingPathComponent("/alpha.mp4") }
   let fps: Int = 30
 
-  @available(iOS 13.0, *)
   var hevcWithAlphaVideoURL: URL { return dirURL.appendingPathComponent("/hevc.mov") }
 }
 
@@ -43,7 +42,6 @@ extension Resource {
     return CGSize(width: abs(size.width), height: abs(size.height))
   }
 
-  @available(iOS 13.0, *)
   var hevcWithAlphaVideoSize: CGSize? {
     guard let track = AVAsset(url: alphaVideoURL).tracks(withMediaType: .video).first else { return nil }
     let size = track.naturalSize.applying(track.preferredTransform)

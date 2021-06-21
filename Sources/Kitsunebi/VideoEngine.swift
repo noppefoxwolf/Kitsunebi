@@ -43,7 +43,6 @@ internal class VideoEngine: NSObject {
     renderThread.start()
   }
   
-  @available(iOS 13.0, *)
   public init(hevcWithAlpha hevcWithAlphaVideoURL: URL, fps: Int) {
     let hevcWithAlphaAsset = Asset(url: hevcWithAlphaVideoURL)
     asset = .yCbCrA(yCbCrA: hevcWithAlphaAsset)

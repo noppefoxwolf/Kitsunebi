@@ -38,3 +38,5 @@ Carthage/Build
 Example/Pods
 Example/Kitsunebi/gift.mp4
 Example/Kitsunebi/alpha.mp4
+
+.build

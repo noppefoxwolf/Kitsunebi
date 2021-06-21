@@ -37,11 +37,7 @@ final class ResourceViewController: UIViewController {
     
     noticeLabel.font = .systemFont(ofSize: 12)
     noticeLabel.numberOfLines = 0
-    if #available(iOS 13.0, *) {
-      noticeLabel.backgroundColor = .systemBackground
-    } else {
-      noticeLabel.backgroundColor = .white
-    }
+    noticeLabel.backgroundColor = .systemBackground
     noticeLabel.textAlignment = .center
     view.addSubview(noticeLabel)
     
@@ -95,12 +91,12 @@ extension ResourceViewController: UITableViewDelegate, UITableViewDataSource {
     let baseText = mSize != nil ? "Base w\(mSize!.width) x h\(mSize!.height)" : "base.mp4 not found"
     let alphaText = aSize != nil ? "Alpha: w\(aSize!.width) x h\(aSize!.height)" : "alpha.mp4 not found"
     var text = "\(baseText) / \(alphaText)"
-    if #available(iOS 13.0, *) {
-      let hevcWithAlphaSize = resource.hevcWithAlphaVideoSize
-      if hevcWithAlphaSize != nil {
-        text = "HEVC with Alpha: w\(hevcWithAlphaSize!.width) x h\(hevcWithAlphaSize!.height)"
-      }
+    
+    let hevcWithAlphaSize = resource.hevcWithAlphaVideoSize
+    if hevcWithAlphaSize != nil {
+      text = "HEVC with Alpha: w\(hevcWithAlphaSize!.width) x h\(hevcWithAlphaSize!.height)"
     }
+    
     cell.detailTextLabel?.text = text
     if let selected = selectedResource, selected.name == resource.name {
       cell.accessoryType = .checkmark

@@ -16,15 +16,7 @@ public protocol PlayerViewDelegate: AnyObject {
 open class PlayerView: UIView {
     typealias LayerClass = CAMetalLayerInterface & CALayer
     override open class var layerClass: Swift.AnyClass {
-        #if targetEnvironment(simulator)
-        if #available(iOS 13, *) {
-            return CAMetalLayer.self
-        } else {
-            return UnsupportedLayer.self
-        }
-        #else
         return CAMetalLayer.self
-        #endif
     }
     private var gpuLayer: LayerClass { self.layer as! LayerClass }
     private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
@@ -44,7 +36,6 @@ open class PlayerView: UIView {
         try engineInstance?.play()
     }
     
-    @available(iOS 13.0, *)
     public func play(hevcWithAlpha hevcWithAlphaVideoURL: URL, fps: Int) throws {
         engineInstance?.purge()
         engineInstance = VideoEngine(hevcWithAlpha: hevcWithAlphaVideoURL, fps: fps)
