@@ -17,9 +17,9 @@ public protocol CAMetalLayerInterface: AnyObject {
 }
 
 #if targetEnvironment(simulator)
-@available(iOS 13, *)
-extension CAMetalLayer: CAMetalLayerInterface {}
+  @available(iOS 13, *)
+  extension CAMetalLayer: CAMetalLayerInterface {}
 #else
-@available(iOS 12, *)
-extension CAMetalLayer: CAMetalLayerInterface {}
+  @available(iOS 12, *)
+  extension CAMetalLayer: CAMetalLayerInterface {}
 #endif

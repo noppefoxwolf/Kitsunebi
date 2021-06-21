@@ -13,23 +13,50 @@ final class ResourceStore {
   private(set) var resources: [Resource] = []
   
   func fetch() throws {
-    let url = URL(fileURLWithPath: NSHomeDirectory() + "/Documents")
+    let documentPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+    let url = URL(fileURLWithPath: documentPath)
     let directories = try FileManager.default.directoriesOfDirectory(at: url)
-    resources = directories.map(Resource.init)
+    resources = directories.compactMap(Resource.init)
   }
 }
 
-struct Resource {
-  let dirURL: URL
-  var name: String { return dirURL.lastPathComponent }
-  var baseVideoURL: URL { return dirURL.appendingPathComponent("/base.mp4") }
-  var alphaVideoURL: URL { return dirURL.appendingPathComponent("/alpha.mp4") }
-  let fps: Int = 30
-
-  var hevcWithAlphaVideoURL: URL { return dirURL.appendingPathComponent("/hevc.mov") }
+enum Resource {
+  case twin(TwinResource)
+  case hevc(HevcResource)
+  
+  var name: String {
+    switch self {
+    case let .hevc(resource):
+      return resource.name
+    case let .twin(resource):
+      return resource.name
+    }
+  }
+  
+  init?(url: URL) {
+    let hevcResource = HevcResource(dirURL: url)
+    if hevcResource.hevcWithAlphaVideoSize != nil {
+      self = .hevc(hevcResource)
+      return
+    }
+    
+    let twinResource = TwinResource(dirURL: url)
+    if twinResource.baseVideoSize != nil {
+      self = .twin(twinResource)
+      return
+    }
+    
+    return nil
+  }
 }
 
-extension Resource {
+struct TwinResource {
+  let dirURL: URL
+  let fps: Int = 30
+  var name: String { dirURL.lastPathComponent }
+  var baseVideoURL: URL { dirURL.appendingPathComponent("/base.mp4") }
+  var alphaVideoURL: URL { dirURL.appendingPathComponent("/alpha.mp4") }
+  
   var baseVideoSize: CGSize? {
     guard let track = AVAsset(url: baseVideoURL).tracks(withMediaType: .video).first else { return nil }
     let size = track.naturalSize.applying(track.preferredTransform)
@@ -41,9 +68,16 @@ extension Resource {
     let size = track.naturalSize.applying(track.preferredTransform)
     return CGSize(width: abs(size.width), height: abs(size.height))
   }
+}
 
+struct HevcResource {
+  let dirURL: URL
+  let fps: Int = 30
+  var name: String { dirURL.lastPathComponent }
+  var hevcWithAlphaVideoURL: URL { dirURL.appendingPathComponent("/hevc.mov") }
+  
   var hevcWithAlphaVideoSize: CGSize? {
-    guard let track = AVAsset(url: alphaVideoURL).tracks(withMediaType: .video).first else { return nil }
+    guard let track = AVAsset(url: dirURL).tracks(withMediaType: .video).first else { return nil }
     let size = track.naturalSize.applying(track.preferredTransform)
     return CGSize(width: abs(size.width), height: abs(size.height))
   }

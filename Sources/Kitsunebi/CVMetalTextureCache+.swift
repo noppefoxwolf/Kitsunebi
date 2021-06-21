@@ -12,8 +12,10 @@ extension CVMetalTextureCache {
   func flush(options: CVOptionFlags = 0) {
     CVMetalTextureCacheFlush(self, options)
   }
-  
-  func makeTextureFromImage(_ buffer: CVImageBuffer, pixelFormat: MTLPixelFormat, planeIndex: Int) throws -> CVMetalTexture {
+
+  func makeTextureFromImage(_ buffer: CVImageBuffer, pixelFormat: MTLPixelFormat, planeIndex: Int)
+    throws -> CVMetalTexture
+  {
     let width = CVPixelBufferGetWidthOfPlane(buffer, planeIndex)
     let height = CVPixelBufferGetHeightOfPlane(buffer, planeIndex)
     var imageTexture: CVMetalTexture?

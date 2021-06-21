@@ -34,11 +34,12 @@ final class PreviewViewController: UIViewController {
   
   private func play() throws {
     guard let resource = currentResource else { return }
-    if resource.hevcWithAlphaVideoSize != nil {
-      try playerView.play(hevcWithAlpha: resource.hevcWithAlphaVideoURL, fps: resource.fps)
-      return;
+    switch resource {
+    case let .twin(resource):
+        try playerView.play(base: resource.baseVideoURL, alpha: resource.alphaVideoURL, fps: resource.fps)
+    case let .hevc(resource):
+        try playerView.play(hevcWithAlpha: resource.hevcWithAlphaVideoURL, fps: resource.fps)
     }
-    try playerView.play(base: resource.baseVideoURL, alpha: resource.alphaVideoURL, fps: resource.fps)
   }
   
   @IBAction func tappedResourceButton(_ sender: Any) {
