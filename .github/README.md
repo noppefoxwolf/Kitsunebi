@@ -1,8 +1,8 @@
-![](.github/meta/repo-banner.png)
+![](https://github.com/noppefoxwolf/Kitsunebi/blob/main/.github/meta/repo-banner.png)
 
 Overlay alpha channel video animation player view using Metal.
 
-![](.github/meta/animation.gif)
+![](https://github.com/noppefoxwolf/Kitsunebi/blob/main/.github/meta/animation.gif)
 
 ## Example
 
