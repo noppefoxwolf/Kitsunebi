@@ -1,0 +1,20 @@
+name: Swift
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: |
+          swift package generate-xcodeproj
+          xcodebuild build -sdk iphoneos -scheme 'Kitsunebi'
+          xcodebuild test -destination 'name=iPhone 11' -scheme 'Kitsunebi'
