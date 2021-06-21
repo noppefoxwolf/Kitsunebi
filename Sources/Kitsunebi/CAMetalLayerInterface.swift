@@ -8,7 +8,7 @@
 import Metal
 import QuartzCore.CAMetalLayer
 
-public protocol CAMetalLayerInterface: class {
+public protocol CAMetalLayerInterface: AnyObject {
   var pixelFormat: MTLPixelFormat { get set }
   var framebufferOnly: Bool { get set }
   var presentsWithTransaction: Bool { get set }

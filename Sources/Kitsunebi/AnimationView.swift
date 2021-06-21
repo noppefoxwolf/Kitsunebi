@@ -8,7 +8,7 @@
 import UIKit
 import MetalKit
 
-public protocol PlayerViewDelegate: class {
+public protocol PlayerViewDelegate: AnyObject {
     func playerView(_ playerView: PlayerView, didUpdateFrame index: Int)
     func didFinished(_ playerView: PlayerView)
 }
@@ -57,7 +57,7 @@ open class PlayerView: UIView {
         guard let device = device else { return nil }
         guard let commandQueue = device.makeCommandQueue() else { return nil }
         guard let textureCache = try? device.makeTextureCache() else { return nil }
-        guard let metalLib = try? device.makeLibrary(URL: Bundle.current.defaultMetalLibraryURL) else { return nil }
+        guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else { return nil }
         guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
         self.commandQueue = commandQueue
         self.textureCache = textureCache
@@ -77,7 +77,7 @@ open class PlayerView: UIView {
         guard let device = MTLCreateSystemDefaultDevice() else { return nil }
         guard let commandQueue = device.makeCommandQueue() else { return nil }
         guard let textureCache = try? device.makeTextureCache() else { return nil }
-        guard let metalLib = try? device.makeLibrary(URL: Bundle.current.defaultMetalLibraryURL) else { return nil }
+        guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else { return nil }
         guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else { return nil }
         self.commandQueue = commandQueue
         self.textureCache = textureCache

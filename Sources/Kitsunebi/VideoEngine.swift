@@ -8,13 +8,13 @@
 import AVFoundation
 import CoreImage
 
-internal protocol VideoEngineUpdateDelegate: class {
+internal protocol VideoEngineUpdateDelegate: AnyObject {
   func didOutputFrame(_ frame: Frame)
   func didReceiveError(_ error: Swift.Error?)
   func didCompleted()
 }
 
-internal protocol VideoEngineDelegate: class {
+internal protocol VideoEngineDelegate: AnyObject {
   func didUpdateFrame(_ index: Int, engine: VideoEngine)
   func engineDidFinishPlaying(_ engine: VideoEngine)
 }

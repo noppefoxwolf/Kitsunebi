@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreVideo
 
 public enum Error: Swift.Error {
   case unknown(String)

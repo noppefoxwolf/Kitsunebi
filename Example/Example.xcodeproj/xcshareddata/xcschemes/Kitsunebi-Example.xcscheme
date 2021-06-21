@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-               BuildableName = "Kitsunebi_Example.app"
-               BlueprintName = "Kitsunebi_Example"
-               ReferencedContainer = "container:Kitsunebi.xcodeproj">
+               BuildableName = "iOS.app"
+               BlueprintName = "iOS"
+               ReferencedContainer = "container:Example.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "607FACE41AFB9204008FA782"
                BuildableName = "Kitsunebi_Tests.xctest"
                BlueprintName = "Kitsunebi_Tests"
-               ReferencedContainer = "container:Kitsunebi.xcodeproj">
+               ReferencedContainer = "container:Example.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Kitsunebi_Example.app"
-            BlueprintName = "Kitsunebi_Example"
-            ReferencedContainer = "container:Kitsunebi.xcodeproj">
+            BuildableName = "iOS.app"
+            BlueprintName = "iOS"
+            ReferencedContainer = "container:Example.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -58,7 +58,7 @@
                BlueprintIdentifier = "607FACE41AFB9204008FA782"
                BuildableName = "Kitsunebi_Tests.xctest"
                BlueprintName = "Kitsunebi_Tests"
-               ReferencedContainer = "container:Kitsunebi.xcodeproj">
+               ReferencedContainer = "container:Example.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -68,7 +68,7 @@
                BlueprintIdentifier = "D74145BC255E72CD00B2AECA"
                BuildableName = "Tests.xctest"
                BlueprintName = "Tests"
-               ReferencedContainer = "container:Kitsunebi.xcodeproj">
+               ReferencedContainer = "container:Example.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -88,9 +88,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Kitsunebi_Example.app"
-            BlueprintName = "Kitsunebi_Example"
-            ReferencedContainer = "container:Kitsunebi.xcodeproj">
+            BuildableName = "iOS.app"
+            BlueprintName = "iOS"
+            ReferencedContainer = "container:Example.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -105,9 +105,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
-            BuildableName = "Kitsunebi_Example.app"
-            BlueprintName = "Kitsunebi_Example"
-            ReferencedContainer = "container:Kitsunebi.xcodeproj">
+            BuildableName = "iOS.app"
+            BlueprintName = "iOS"
+            ReferencedContainer = "container:Example.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ApplicationHandlerDelegate: class {
+protocol ApplicationHandlerDelegate: AnyObject {
   func willResignActive(_ notification: Notification)
   func didBecomeActive(_ notification: Notification)
 }
