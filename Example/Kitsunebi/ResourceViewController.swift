@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ResourceViewControllerDelegate: class {
+protocol ResourceViewControllerDelegate: AnyObject {
   func resource(_ viewController: ResourceViewController, didSelected resource: Resource)
 }
 
@@ -19,9 +19,9 @@ final class ResourceViewController: UIViewController {
   private lazy var tableView: UITableView = .init(frame: view.bounds)
   weak var delegate: ResourceViewControllerDelegate? = nil
   private let emptyResourceMessage: String = """
-  Transfer arbitrary directories using itunes.
-  There are base.mp4 and alpha.mp4.
-  ex: Burning/base.mp4 and Burning/alpha.mp4
+  Transfer arbitrary directories using Finder.
+  There are base.mp4 and alpha.mp4 or hevc.mov.
+  ex: Burning/base.mp4 and Burning/alpha.mp4 or Burning/hevc.mov
   """
   
   static func make(selected resource: Resource?) -> ResourceViewController {
@@ -86,18 +86,19 @@ extension ResourceViewController: UITableViewDelegate, UITableViewDataSource {
     let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cell")
     let resource = resourceStore.resources[indexPath.row]
     cell.textLabel?.text = resource.name
-    let mSize = resource.baseVideoSize
-    let aSize = resource.alphaVideoSize
-    let baseText = mSize != nil ? "Base w\(mSize!.width) x h\(mSize!.height)" : "base.mp4 not found"
-    let alphaText = aSize != nil ? "Alpha: w\(aSize!.width) x h\(aSize!.height)" : "alpha.mp4 not found"
-    var text = "\(baseText) / \(alphaText)"
     
-    let hevcWithAlphaSize = resource.hevcWithAlphaVideoSize
-    if hevcWithAlphaSize != nil {
-      text = "HEVC with Alpha: w\(hevcWithAlphaSize!.width) x h\(hevcWithAlphaSize!.height)"
+    switch resource {
+    case let .hevc(resource):
+        let hevcWithAlphaSize = resource.hevcWithAlphaVideoSize
+        cell.detailTextLabel?.text = "HEVC with Alpha: w\(hevcWithAlphaSize!.width) x h\(hevcWithAlphaSize!.height)"
+    case let .twin(resource):
+        let mSize = resource.baseVideoSize
+        let aSize = resource.alphaVideoSize
+        let baseText = mSize != nil ? "Base w\(mSize!.width) x h\(mSize!.height)" : "base.mp4 not found"
+        let alphaText = aSize != nil ? "Alpha: w\(aSize!.width) x h\(aSize!.height)" : "alpha.mp4 not found"
+        cell.detailTextLabel?.text = "\(baseText) / \(alphaText)"
     }
     
-    cell.detailTextLabel?.text = text
     if let selected = selectedResource, selected.name == resource.name {
       cell.accessoryType = .checkmark
     } else {
