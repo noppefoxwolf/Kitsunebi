@@ -1,8 +1,8 @@
-![](https://github.com/noppefoxwolf/Kitsunebi/blob/master/meta/repo-banner.png)
+![](meta/repo-banner.png)
 
 Overlay alpha channel video animation player view using Metal.
 
-![](https://github.com/noppefoxwolf/Kitsunebi/blob/master/meta/animation.gif)
+![](meta/animation.gif)
 
 ## Example
 
@@ -37,11 +37,16 @@ playerView.play(base: baseVideoURL, alpha: alphaVideoURL, fps: 30)
 
 ## Installation
 
-Kitsunebi is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+Kitsunebi is available SwiftPM and Carthage. To install it, simply add the following line to your SwiftPM:
 
-```ruby
-pod 'Kitsunebi'
+```swift
+    dependencies: [
+        .package(url: "https://github.com/noppefoxwolf/Kitsunebi", .upToNextMajor(from: "v1.0.0"))
+    ]
+```
+
+```
+github "noppefoxwolf/Kitsunebi" "v1.0.0"
 ```
 
 ## Author
