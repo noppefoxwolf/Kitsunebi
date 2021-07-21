@@ -77,7 +77,7 @@ struct HevcResource {
   var hevcWithAlphaVideoURL: URL { dirURL.appendingPathComponent("/hevc.mov") }
   
   var hevcWithAlphaVideoSize: CGSize? {
-    guard let track = AVAsset(url: dirURL).tracks(withMediaType: .video).first else { return nil }
+    guard let track = AVAsset(url: hevcWithAlphaVideoURL).tracks(withMediaType: .video).first else { return nil }
     let size = track.naturalSize.applying(track.preferredTransform)
     return CGSize(width: abs(size.width), height: abs(size.height))
   }
