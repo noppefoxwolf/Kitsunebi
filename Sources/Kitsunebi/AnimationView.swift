@@ -22,7 +22,8 @@ open class PlayerView: UIView {
   private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
-  private let pipelineState: MTLRenderPipelineState
+  private let mp4PipelineState: MTLRenderPipelineState
+  private let hevcPipelineState: MTLRenderPipelineState
   private var applicationHandler = ApplicationHandler()
 
   public weak var delegate: PlayerViewDelegate? = nil
@@ -51,12 +52,16 @@ open class PlayerView: UIView {
     guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
       return nil
     }
-    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else {
+    guard let mp4PipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "mp4FragmentShader") else {
+      return nil
+    }
+    guard let hevcPipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "hevcFragmentShader") else {
       return nil
     }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.pipelineState = pipelineState
+    self.mp4PipelineState = mp4PipelineState
+    self.hevcPipelineState = hevcPipelineState
     super.init(frame: frame)
     applicationHandler.delegate = self
     backgroundColor = .clear
@@ -75,12 +80,16 @@ open class PlayerView: UIView {
     guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
       return nil
     }
-    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else {
+    guard let mp4PipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "mp4FragmentShader") else {
+      return nil
+    }
+    guard let hevcPipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "hevcFragmentShader") else {
       return nil
     }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.pipelineState = pipelineState
+    self.mp4PipelineState = mp4PipelineState
+    self.hevcPipelineState = hevcPipelineState
     super.init(coder: aDecoder)
     applicationHandler.delegate = self
     backgroundColor = .clear
@@ -98,7 +107,16 @@ open class PlayerView: UIView {
 
   private func renderImage(with frame: Frame, to nextDrawable: CAMetalDrawable) throws {
     let (baseYTexture, baseCbCrTexture, alphaYTexture) = try makeTexturesFrom(frame)
+    
+    let pipelineState: MTLRenderPipelineState
 
+    switch frame {
+    case .yCbCrWithA(_, _):
+      pipelineState = mp4PipelineState
+    case .yCbCrA(_):
+      pipelineState = hevcPipelineState
+    }
+      
     let renderDesc = MTLRenderPassDescriptor()
     renderDesc.colorAttachments[0].texture = nextDrawable.texture
     renderDesc.colorAttachments[0].loadAction = .clear

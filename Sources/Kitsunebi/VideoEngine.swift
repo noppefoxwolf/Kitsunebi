@@ -37,8 +37,9 @@ internal class VideoEngine: NSObject {
   private lazy var currentFrameIndex: Int = 0
 
   public init(base baseVideoURL: URL, alpha alphaVideoURL: URL, fps: Int) {
-    let baseAsset = Asset(url: baseVideoURL)
-    let alphaAsset = Asset(url: alphaVideoURL)
+    // video range, full range両方くる可能性があるので、video rangeに統一
+    let baseAsset = Asset(url: baseVideoURL, pixelFormatType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
+    let alphaAsset = Asset(url: alphaVideoURL, pixelFormatType: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
     asset = .yCbCrWithA(yCbCr: baseAsset, a: alphaAsset)
     fpsKeeper = FPSKeeper(fps: fps)
     super.init()
