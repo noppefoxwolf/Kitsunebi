@@ -51,7 +51,7 @@ extension MTLDevice {
     metalLib: MTLLibrary,
     pixelFormat: MTLPixelFormat = .bgra8Unorm,
     vertexFunctionName: String = "vertexShader",
-    fragmentFunctionName: String = "fragmentShader"
+    fragmentFunctionName: String
   ) throws -> MTLRenderPipelineState {
     let pipelineDesc = MTLRenderPipelineDescriptor()
     pipelineDesc.vertexFunction = metalLib.makeFunction(name: vertexFunctionName)
