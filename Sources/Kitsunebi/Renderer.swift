@@ -11,25 +11,13 @@ import MetalKit
 
 protocol Renderer {
   
-  var pipelineState: MTLRenderPipelineState {
-    get
-  }
-  
-  func makeTexturesFrom(_ frame: Frame) throws -> (
-    y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?
-  )
+  func getPipelineState() -> MTLRenderPipelineState
 }
 
 class SuperRenderer: Renderer {
-  var pipelineState: MTLRenderPipelineState {
+  func getPipelineState() -> MTLRenderPipelineState {
     fatalError("sub class")
   }
-  
-    
-  func makeTexturesFrom(_ frame: Frame) throws -> (y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?) {
-    fatalError("sub class")
-  }
-  
   
   private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
 
@@ -49,14 +37,15 @@ class SuperRenderer: Renderer {
     self.textureCache = textureCache
   }
   
-  func render(frame: Frame) {
+  func render(textureBlock: @escaping (() throws -> (baseYTexture: MTLTexture?, baseCbCrTexture: MTLTexture?, alphaYTexture: MTLTexture?)?), size: CGSize) {
     DispatchQueue.main.async { [weak self] in
       /// `gpuLayer` must access within main-thread.
       guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
-      self?.gpuLayer.drawableSize = frame.size
+      self?.gpuLayer.drawableSize = size
       self?.renderQueue.async { [weak self] in
         do {
-          try self?.renderImage(with: frame, to: nextDrawable)
+          let group = try textureBlock()
+          try self?.renderImage(baseYTexture: group?.baseYTexture, baseCbCrTexture: group?.baseCbCrTexture, alphaYTexture: group?.alphaYTexture, to: nextDrawable)
         } catch {
           self?.clear(nextDrawable: nextDrawable)
         }
@@ -64,10 +53,8 @@ class SuperRenderer: Renderer {
     }
   }
   
-  private func renderImage(with frame: Frame, to nextDrawable: CAMetalDrawable) throws {
-    let (baseYTexture, baseCbCrTexture, alphaYTexture) = try self.makeTexturesFrom(frame)
-    
-    let pipelineState: MTLRenderPipelineState = self.pipelineState
+  private func renderImage(baseYTexture: MTLTexture?, baseCbCrTexture: MTLTexture?, alphaYTexture: MTLTexture?, to nextDrawable: CAMetalDrawable) throws {
+    let pipelineState: MTLRenderPipelineState = getPipelineState()
       
     let renderDesc = MTLRenderPassDescriptor()
     renderDesc.colorAttachments[0].texture = nextDrawable.texture
@@ -119,20 +106,4 @@ class SuperRenderer: Renderer {
     }
   }
 
-}
-
-
-internal class RendererFacde {
-  
-  init?(gpuLayer: CAMetalLayerInterface & CALayer, device: MTLDevice?) {
-
-  }
-  
-  func render(frame: Frame) {
-    
-  }
-  
-  func clear() {
-  }
-  
 }

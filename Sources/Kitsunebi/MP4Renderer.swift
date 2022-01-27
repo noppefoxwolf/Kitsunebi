@@ -9,8 +9,12 @@ import Foundation
 import MetalKit
 
 class MP4Renderer: SuperRenderer {
-  let pipelineState: MTLRenderPipelineState
+  private let pipelineState: MTLRenderPipelineState
     
+  override func getPipelineState() -> MTLRenderPipelineState {
+    pipelineState
+  }
+  
   override init?(gpuLayer: CAMetalLayerInterface & CALayer, device: MTLDevice?) {
     guard let metalLib = try? device?.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
       return nil
@@ -24,32 +28,29 @@ class MP4Renderer: SuperRenderer {
     super.init(gpuLayer: gpuLayer, device: device)
   }
   
-  override func makeTexturesFrom(_ frame: Frame) throws -> (
-    y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?
-  ) {
+  func render(yCbCr: CVImageBuffer, alpha: CVImageBuffer, size: CGSize) throws {
+    let a = { [weak self] () throws -> (baseYTexture: MTLTexture?, baseCbCrTexture: MTLTexture?, alphaYTexture: MTLTexture?)? in
+      guard let self = self else { return nil }
+
     let baseYTexture: MTLTexture?
     let baseCbCrTexture: MTLTexture?
     let alphaYTexture: MTLTexture?
-
-    switch frame {
-    case let .yCbCrWithA(yCbCr, a):
-      let basePixelBuffer = yCbCr
-      let alphaPixelBuffer = a
-      let alphaPlaneIndex = 0
-      baseYTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0
-      ).texture
-      baseCbCrTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1
-      ).texture
-      alphaYTexture = try textureCache.makeTextureFromImage(
-        alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: alphaPlaneIndex
-      ).texture
-
-    case let .yCbCrA(yCbCrA):
-     break
+    
+    let basePixelBuffer = yCbCr
+    let alphaPixelBuffer = alpha
+    let alphaPlaneIndex = 0
+      baseYTexture = try self.textureCache.makeTextureFromImage(
+      basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0
+    ).texture
+      baseCbCrTexture = try self.textureCache.makeTextureFromImage(
+      basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1
+    ).texture
+      alphaYTexture = try self.textureCache.makeTextureFromImage(
+      alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: alphaPlaneIndex
+    ).texture
+      
+      return (baseYTexture, baseCbCrTexture, alphaYTexture)
     }
-
-    return (baseYTexture, baseCbCrTexture, alphaYTexture)
+    super.render(textureBlock: a, size: size)
   }
 }
