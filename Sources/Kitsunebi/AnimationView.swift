@@ -24,7 +24,7 @@ open class PlayerView: UIView {
 
   public weak var delegate: PlayerViewDelegate? = nil
   internal var engineInstance: VideoEngine? = nil
-  private var render: Renderer!
+  private var render: RendererFacde!
 
   public func play(base baseVideoURL: URL, alpha alphaVideoURL: URL, fps: Int) throws {
     engineInstance?.purge()
@@ -54,7 +54,7 @@ open class PlayerView: UIView {
     gpuLayer.framebufferOnly = false
     gpuLayer.presentsWithTransaction = false
     
-    guard let render = Renderer(gpuLayer: gpuLayer, device: device) else {
+    guard let render = RendererFacde(gpuLayer: gpuLayer, device: device) else {
       return nil
     }
     self.render = render
@@ -71,7 +71,7 @@ open class PlayerView: UIView {
     gpuLayer.framebufferOnly = false
     gpuLayer.presentsWithTransaction = false
     
-    guard let render = Renderer(gpuLayer: gpuLayer, device: MTLCreateSystemDefaultDevice()) else {
+    guard let render = RendererFacde(gpuLayer: gpuLayer, device: MTLCreateSystemDefaultDevice()) else {
       return nil
     }
     self.render = render
@@ -85,7 +85,7 @@ open class PlayerView: UIView {
 extension PlayerView: VideoEngineUpdateDelegate {
   internal func didOutputFrame(_ frame: Frame) {
     guard applicationHandler.isActive else { return }
-    render.test(frame: frame)
+    render.render(frame: frame)
   }
 
   internal func didReceiveError(_ error: Swift.Error?) {

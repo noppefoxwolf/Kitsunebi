@@ -8,15 +8,34 @@
 import Foundation
 import MetalKit
 
-internal class Renderer {
+
+protocol Renderer {
   
-  private let mp4PipelineState: MTLRenderPipelineState
-  private let hevcPipelineState: MTLRenderPipelineState
+  var pipelineState: MTLRenderPipelineState {
+    get
+  }
+  
+  func makeTexturesFrom(_ frame: Frame) throws -> (
+    y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?
+  )
+}
+
+class SuperRenderer: Renderer {
+  var pipelineState: MTLRenderPipelineState {
+    fatalError("sub class")
+  }
+  
+    
+  func makeTexturesFrom(_ frame: Frame) throws -> (y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?) {
+    fatalError("sub class")
+  }
+  
+  
   private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
 
   private let commandQueue: MTLCommandQueue
-  private let textureCache: CVMetalTextureCache
- 
+  let textureCache: CVMetalTextureCache
+  let device: MTLDevice
   private var gpuLayer: CAMetalLayerInterface & CALayer
   
   init?(gpuLayer: CAMetalLayerInterface & CALayer, device: MTLDevice?) {
@@ -24,23 +43,13 @@ internal class Renderer {
     guard let device = device else { return nil }
     guard let commandQueue = device.makeCommandQueue() else { return nil }
     guard let textureCache = try? device.makeTextureCache() else { return nil }
-    guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
-      return nil
-    }
-    guard let mp4PipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "mp4FragmentShader") else {
-      return nil
-    }
-    guard let hevcPipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "hevcFragmentShader") else {
-      return nil
-    }
+    
+    self.device = device
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.mp4PipelineState = mp4PipelineState
-    self.hevcPipelineState = hevcPipelineState
   }
   
-  
-  func test(frame: Frame) {
+  func render(frame: Frame) {
     DispatchQueue.main.async { [weak self] in
       /// `gpuLayer` must access within main-thread.
       guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
@@ -56,16 +65,9 @@ internal class Renderer {
   }
   
   private func renderImage(with frame: Frame, to nextDrawable: CAMetalDrawable) throws {
-    let (baseYTexture, baseCbCrTexture, alphaYTexture) = try makeTexturesFrom(frame)
+    let (baseYTexture, baseCbCrTexture, alphaYTexture) = try self.makeTexturesFrom(frame)
     
-    let pipelineState: MTLRenderPipelineState
-
-    switch frame {
-    case .yCbCrWithA(_, _):
-      pipelineState = mp4PipelineState
-    case .yCbCrA(_):
-      pipelineState = hevcPipelineState
-    }
+    let pipelineState: MTLRenderPipelineState = self.pipelineState
       
     let renderDesc = MTLRenderPassDescriptor()
     renderDesc.colorAttachments[0].texture = nextDrawable.texture
@@ -117,43 +119,20 @@ internal class Renderer {
     }
   }
 
-  private func makeTexturesFrom(_ frame: Frame) throws -> (
-    y: MTLTexture?, cbcr: MTLTexture?, a: MTLTexture?
-  ) {
-    let baseYTexture: MTLTexture?
-    let baseCbCrTexture: MTLTexture?
-    let alphaYTexture: MTLTexture?
+}
 
-    switch frame {
-    case let .yCbCrWithA(yCbCr, a):
-      let basePixelBuffer = yCbCr
-      let alphaPixelBuffer = a
-      let alphaPlaneIndex = 0
-      baseYTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0
-      ).texture
-      baseCbCrTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1
-      ).texture
-      alphaYTexture = try textureCache.makeTextureFromImage(
-        alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: alphaPlaneIndex
-      ).texture
 
-    case let .yCbCrA(yCbCrA):
-      let basePixelBuffer = yCbCrA
-      let alphaPixelBuffer = yCbCrA
-      let alphaPlaneIndex = 2
-      baseYTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .r8Unorm, planeIndex: 0
-      ).texture
-      baseCbCrTexture = try textureCache.makeTextureFromImage(
-        basePixelBuffer, pixelFormat: .rg8Unorm, planeIndex: 1
-      ).texture
-      alphaYTexture = try textureCache.makeTextureFromImage(
-        alphaPixelBuffer, pixelFormat: .r8Unorm, planeIndex: alphaPlaneIndex
-      ).texture
-    }
+internal class RendererFacde {
+  
+  init?(gpuLayer: CAMetalLayerInterface & CALayer, device: MTLDevice?) {
 
-    return (baseYTexture, baseCbCrTexture, alphaYTexture)
   }
+  
+  func render(frame: Frame) {
+    
+  }
+  
+  func clear() {
+  }
+  
 }
