@@ -18,7 +18,8 @@ open class PlayerView: UIView {
   override open class var layerClass: Swift.AnyClass {
     return CAMetalLayer.self
   }
-  private var gpuLayer: LayerClass { self.layer as! LayerClass }
+  // self.layer main thread使う必要あるので、事前に持つことでmain thread以外のthreadでも使えるように
+  private lazy var gpuLayer: LayerClass = { fatalError("gpuLayer must be init") }()
   private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
@@ -60,6 +61,8 @@ open class PlayerView: UIView {
     super.init(frame: frame)
     applicationHandler.delegate = self
     backgroundColor = .clear
+    
+    gpuLayer = self.layer as! LayerClass
     gpuLayer.isOpaque = false
     gpuLayer.drawsAsynchronously = true
     gpuLayer.contentsGravity = .resizeAspectFill
@@ -84,6 +87,8 @@ open class PlayerView: UIView {
     super.init(coder: aDecoder)
     applicationHandler.delegate = self
     backgroundColor = .clear
+    
+    gpuLayer = self.layer as! LayerClass
     gpuLayer.isOpaque = false
     gpuLayer.drawsAsynchronously = true
     gpuLayer.contentsGravity = .resizeAspectFill
@@ -122,12 +127,9 @@ open class PlayerView: UIView {
   }
 
   private func clear() {
-    DispatchQueue.main.async { [weak self] in
-      /// `gpuLayer` must access within main-thread.
+    renderQueue.async { [weak self] in
       guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
-      self?.renderQueue.async { [weak self] in
-        self?.clear(nextDrawable: nextDrawable)
-      }
+      self?.clear(nextDrawable: nextDrawable)
     }
   }
 
@@ -192,16 +194,14 @@ open class PlayerView: UIView {
 extension PlayerView: VideoEngineUpdateDelegate {
   internal func didOutputFrame(_ frame: Frame) {
     guard applicationHandler.isActive else { return }
-    DispatchQueue.main.async { [weak self] in
-      /// `gpuLayer` must access within main-thread.
-      guard let nextDrawable = self?.gpuLayer.nextDrawable() else { return }
-      self?.gpuLayer.drawableSize = frame.size
-      self?.renderQueue.async { [weak self] in
-        do {
-          try self?.renderImage(with: frame, to: nextDrawable)
-        } catch {
-          self?.clear(nextDrawable: nextDrawable)
-        }
+    
+    renderQueue.async { [weak self] in
+      guard let self = self, let nextDrawable = self.gpuLayer.nextDrawable() else { return }
+      self.gpuLayer.drawableSize = frame.size
+      do {
+        try self.renderImage(with: frame, to: nextDrawable)
+      } catch {
+        self.clear(nextDrawable: nextDrawable)
       }
     }
   }
