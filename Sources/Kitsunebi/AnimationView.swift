@@ -20,7 +20,7 @@ open class PlayerView: UIView {
   }
   // self.layer main thread使う必要あるので、事前に持つことでmain thread以外のthreadでも使えるように
   private lazy var gpuLayer: LayerClass = { fatalError("gpuLayer must be init") }()
-  private let renderQueue: DispatchQueue = .global(qos: .userInitiated)
+  private let renderQueue: DispatchQueue = DispatchQueue(label: "dev.noppe.kitsunebi.PlayerView.renderQueue", qos: .userInitiated)
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
   private let pipelineState: MTLRenderPipelineState
@@ -102,6 +102,8 @@ open class PlayerView: UIView {
   }
 
   private func renderImage(with frame: Frame, to nextDrawable: CAMetalDrawable) throws {
+    dispatchPrecondition(condition: .onQueue(renderQueue))
+
     let (baseYTexture, baseCbCrTexture, alphaYTexture) = try makeTexturesFrom(frame)
 
     let renderDesc = MTLRenderPassDescriptor()
@@ -134,20 +136,21 @@ open class PlayerView: UIView {
   }
 
   private func clear(nextDrawable: CAMetalDrawable) {
-    renderQueue.async { [weak self] in
-      let renderPassDescriptor = MTLRenderPassDescriptor()
-      renderPassDescriptor.colorAttachments[0].texture = nextDrawable.texture
-      renderPassDescriptor.colorAttachments[0].loadAction = .clear
-      renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
-        red: 0, green: 0, blue: 0, alpha: 0)
-
-      let commandBuffer = self?.commandQueue.makeCommandBuffer()
-      let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
-      renderEncoder?.endEncoding()
-      commandBuffer?.present(nextDrawable)
-      commandBuffer?.commit()
-      self?.textureCache.flush()
-    }
+    // render queueで実行する必要がある
+    dispatchPrecondition(condition: .onQueue(renderQueue))
+    
+    let renderPassDescriptor = MTLRenderPassDescriptor()
+    renderPassDescriptor.colorAttachments[0].texture = nextDrawable.texture
+    renderPassDescriptor.colorAttachments[0].loadAction = .clear
+    renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(
+      red: 0, green: 0, blue: 0, alpha: 0)
+    
+    let commandBuffer = commandQueue.makeCommandBuffer()
+    let renderEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor)
+    renderEncoder?.endEncoding()
+    commandBuffer?.present(nextDrawable)
+    commandBuffer?.commit()
+    textureCache.flush()
   }
 
   private func makeTexturesFrom(_ frame: Frame) throws -> (
@@ -193,10 +196,9 @@ open class PlayerView: UIView {
 
 extension PlayerView: VideoEngineUpdateDelegate {
   internal func didOutputFrame(_ frame: Frame) {
-    guard applicationHandler.isActive else { return }
-    
     renderQueue.async { [weak self] in
-      guard let self = self, let nextDrawable = self.gpuLayer.nextDrawable() else { return }
+      guard let self = self, self.applicationHandler.isActive else { return }
+      guard let nextDrawable = self.gpuLayer.nextDrawable() else { return }
       self.gpuLayer.drawableSize = frame.size
       do {
         try self.renderImage(with: frame, to: nextDrawable)
