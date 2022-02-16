@@ -23,7 +23,8 @@ open class PlayerView: UIView {
   private let renderQueue: DispatchQueue = DispatchQueue(label: "dev.noppe.kitsunebi.PlayerView.renderQueue", qos: .userInitiated)
   private let commandQueue: MTLCommandQueue
   private let textureCache: CVMetalTextureCache
-  private let pipelineState: MTLRenderPipelineState
+  private let mp4VideoRangePipelineState: MTLRenderPipelineState
+  private let hevcVideoRangePipelineState: MTLRenderPipelineState
   private var applicationHandler = ApplicationHandler()
 
   public weak var delegate: PlayerViewDelegate? = nil
@@ -52,12 +53,16 @@ open class PlayerView: UIView {
     guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
       return nil
     }
-    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else {
+    guard let mp4VideoRangePipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "mp4VideoRangeFragmentShader") else {
+      return nil
+    }
+    guard let hevcVideoRangePipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "hevcVideoRangeFragmentShader") else {
       return nil
     }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.pipelineState = pipelineState
+    self.mp4VideoRangePipelineState = mp4VideoRangePipelineState
+    self.hevcVideoRangePipelineState = hevcVideoRangePipelineState
     super.init(frame: frame)
     applicationHandler.delegate = self
     backgroundColor = .clear
@@ -78,12 +83,16 @@ open class PlayerView: UIView {
     guard let metalLib = try? device.makeLibrary(URL: Bundle.module.defaultMetalLibraryURL) else {
       return nil
     }
-    guard let pipelineState = try? device.makeRenderPipelineState(metalLib: metalLib) else {
+    guard let mp4VideoRangePipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "mp4VideoRangeFragmentShader") else {
+      return nil
+    }
+    guard let hevcVideoRangePipelineState = try? device.makeRenderPipelineState(metalLib: metalLib, fragmentFunctionName: "hevcVideoRangeFragmentShader") else {
       return nil
     }
     self.commandQueue = commandQueue
     self.textureCache = textureCache
-    self.pipelineState = pipelineState
+    self.mp4VideoRangePipelineState = mp4VideoRangePipelineState
+    self.hevcVideoRangePipelineState = hevcVideoRangePipelineState
     super.init(coder: aDecoder)
     applicationHandler.delegate = self
     backgroundColor = .clear
@@ -105,7 +114,16 @@ open class PlayerView: UIView {
     dispatchPrecondition(condition: .onQueue(renderQueue))
 
     let (baseYTexture, baseCbCrTexture, alphaYTexture) = try makeTexturesFrom(frame)
+    
+    let pipelineState: MTLRenderPipelineState
 
+    switch frame {
+    case .yCbCrWithA(_, _):
+      pipelineState = mp4VideoRangePipelineState
+    case .yCbCrA(_):
+      pipelineState = hevcVideoRangePipelineState
+    }
+      
     let renderDesc = MTLRenderPassDescriptor()
     renderDesc.colorAttachments[0].texture = nextDrawable.texture
     renderDesc.colorAttachments[0].loadAction = .clear

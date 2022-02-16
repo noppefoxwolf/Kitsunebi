@@ -8,16 +8,25 @@
 import AVFoundation
 
 final class Asset {
-  private let outputSettings: [String: Any] = [
-    kCVPixelBufferMetalCompatibilityKey as String: true
-  ]
+  private var outputSettings: [String: Any] {
+    if let pixelFormatType = pixelFormatType {
+      return [
+        kCVPixelBufferPixelFormatTypeKey as String: pixelFormatType,
+        kCVPixelBufferMetalCompatibilityKey as String: true
+      ]
+    }
+    
+    return [kCVPixelBufferMetalCompatibilityKey as String: true]
+  }
   let asset: AVURLAsset
+  private let pixelFormatType: OSType?
   private var reader: AVAssetReader? = nil
   private var output: AVAssetReaderTrackOutput? = nil
   var status: AVAssetReader.Status? { reader?.status }
 
-  init(url: URL) {
-    asset = AVURLAsset(url: url)
+  init(url: URL, pixelFormatType: OSType? = nil) {
+    self.asset = AVURLAsset(url: url)
+    self.pixelFormatType = pixelFormatType
   }
 
   func reset() throws {
